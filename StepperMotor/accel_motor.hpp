@@ -19,20 +19,26 @@ namespace MotorSpecial {
     {
         uint32_t ramp_time{};
         AccelType accel_type{};
+        uint32_t A {};
+        uint32_t Vmax {};
+        uint32_t Vmin {};
         StepperCfg stepperCfg;
     };
 
     struct AccelMotor: StepperMotorBase {
+
         explicit AccelMotor(AccelCfg cfg)
-                : StepperMotorBase(cfg.stepperCfg) {
+            : StepperMotorBase(cfg.stepperCfg)
+        {
             UpdateConfig(cfg);
         }
 
-        void UpdateConfig(AccelCfg &cfg) {
+        void UpdateConfig(AccelCfg &cfg){
             accel_type_ = cfg.accel_type;
-            A_ = cfg.stepperCfg.A;
-            if (cfg.ramp_time != T_ || cfg.stepperCfg.Vmax != config_Vmax_) {
-                config_Vmax_ = cfg.stepperCfg.Vmax;
+            A_ = cfg.A;
+            if (cfg.ramp_time != T_ || cfg.Vmax != config_Vmax_) {
+                config_Vmax_ = cfg.Vmax;
+                config_Vmin_ = cfg.Vmin;
                 T_ = cfg.ramp_time;
                 ReCalcKFactors();
             }
@@ -41,13 +47,14 @@ namespace MotorSpecial {
         uint32_t GetAccelTimeGap(){
             return T_ - uSec_accel_;
         }
+
     protected:
         uint32_t T_{1};
         uint32_t config_Vmax_{1};
+        uint32_t config_Vmin_{1};
     private:
         uint32_t A_{1};
         AccelType accel_type_ = kParabolic;
-        int steps_to_stop_{0};
 
         struct {
             float k1{1};
@@ -74,20 +81,20 @@ namespace MotorSpecial {
             }
         } sigmoid_;
 
-        float k_{1};
 
+        float k_{1};
         void ReCalcKFactors() {
             switch (accel_type_) {
                 case kLinear:
-                    k_ = static_cast<float>(config_Vmax_ - Vmin_) / T_;
+                    k_ = static_cast<float>(config_Vmax_ - config_Vmin_) / T_;
                     break;
                 case kConstantPower:
-                    k_ = (config_Vmax_ - Vmin_) / sqrtf(T_);
+                    k_ = (config_Vmax_ - config_Vmin_) / sqrtf(T_);
                     break;
                 case kParabolic:
                     break;
                 case kSigmoid:
-                    sigmoid_.KCalc(T_, static_cast<float>(config_Vmax_), static_cast<float>(Vmin_));
+                    sigmoid_.KCalc(T_, static_cast<float>(config_Vmax_), static_cast<float>(config_Vmin_));
                     break;
             }
         }

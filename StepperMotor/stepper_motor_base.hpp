@@ -43,9 +43,6 @@ namespace StepperMotor{
         uint32_t timChannel {0x00000000U};
         uint32_t criticalNofSteps {};
         bool directionInverted {};
-        uint32_t A {};
-        uint32_t Vmax {};
-        uint32_t Vmin {};
     };
 
     using namespace Motor;
@@ -128,8 +125,6 @@ namespace StepperMotor{
                  enable_pin_(cfg.enable_pin),
                  timChannel_(cfg.timChannel),
                  htim_(cfg.htim),
-                 Vmax_(cfg.Vmax),
-                 Vmin_(cfg.Vmin),
                  directionInverted_(cfg.directionInverted)
         {
             kCriticalNofSteps_ = cfg.criticalNofSteps;

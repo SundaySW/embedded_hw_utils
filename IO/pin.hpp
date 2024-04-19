@@ -68,14 +68,14 @@ namespace PIN_BOARD{
             return static_cast<LOGIC_LEVEL*>(&currentState_);
         }
 
-        constexpr void setAFSpi(uint8_t spi_n = 1){
-            port_->MODER = (port_->MODER)
-                           & (~(GPIO_MODER_MODE0 << (position_ * 2U)))
-                           | ((GPIO_MODE_AF_PP & GPIO_MODE) << (position_ * 2U));
-            port_->AFR[position_ >> 3U] = (port_->AFR[position_ >> 3U])
-                                          & (~(0xFU << ((position_ & 0x07U) * 4U)))
-                                          | ((spi_n) << ((position_ & 0x07U) * 4U));
-        }
+//        constexpr void setAFSpi(uint8_t spi_n = 1){
+//            port_->MODER = (port_->MODER)
+//                           & (~(GPIO_MODER_MODE0 << (position_ * 2U)))
+//                           | ((GPIO_MODE_AF_PP & GPIO_MODE) << (position_ * 2U));
+//            port_->AFR[position_ >> 3U] = (port_->AFR[position_ >> 3U])
+//                                          & (~(0xFU << ((position_ & 0x07U) * 4U)))
+//                                          | ((spi_n) << ((position_ & 0x07U) * 4U));
+//        }
 
         constexpr void setAsOutput(){
             port_->AFR[position_ >> 3u] &= ~(0xFu << ((position_ & 0x07u) * 4u));
