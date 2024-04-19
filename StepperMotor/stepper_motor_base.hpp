@@ -10,6 +10,29 @@
 
 using namespace PIN_BOARD;
 
+namespace Motor{
+    enum class Direction{
+        BACKWARDS = 0,
+        FORWARD = 1
+    };
+
+    enum Mode
+    {
+        IDLE,
+        ACCEL,
+        CONST,
+        DECCEL,
+        in_ERROR
+    };
+
+    enum MOTOR_EVENT {
+        EVENT_NULL = 0,
+        EVENT_STOP,
+        EVENT_CSS,  //	constant speed reached
+        EVENT_CSE   //  constant speed end
+    };
+}
+
 namespace StepperMotor{
     struct StepperCfg
     {
@@ -25,35 +48,7 @@ namespace StepperMotor{
         uint32_t Vmin {};
     };
 
-    enum MOTOR_EVENT {
-        EVENT_NULL = 0,
-        EVENT_STOP,
-        EVENT_CSS,  //	constant speed reached
-        EVENT_CSE   //  constant speed end
-    };
-
-    enum MOTOR_PIN{
-        CURRENT_WIND,
-        STEP_PIN,
-        DIR_PIN,
-        ENABLE_PIN,
-        RESET_PIN,
-    };
-
-    enum Mode
-    {
-        IDLE,
-        ACCEL,
-        CONST,
-        DECCEL,
-        in_ERROR
-    };
-
-    enum class Direction{
-        BACKWARDS = 0,
-        FORWARD = 1
-    };
-
+    using namespace Motor;
     class StepperMotorBase{
     public:
         using MOTOR_IOS = PIN<PinWriteable>;
