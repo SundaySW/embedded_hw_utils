@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include "type_traits"
-#include "stm32g4xx_hal_gpio.h"
 
 namespace PIN_BOARD{
 

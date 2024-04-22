@@ -9,6 +9,7 @@ struct InputSignal{
         last_disconnected,
         no_device
     };
+
     constexpr explicit InputSignal(GPIO_TypeDef* port, uint16_t pin, uint32_t debounce_time) noexcept
         : pin_(port, pin)
         , debounce_time_(debounce_time)
