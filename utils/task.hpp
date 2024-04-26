@@ -34,39 +34,39 @@ namespace utils{
         [[nodiscard]] std::size_t RxSize() const { return rx_size_; }
 
         Task() = default;
-        Task(std::pair<const uint8_t*, std::size_t> data_size_pair, TaskType type = transmit)
+        Task(std::pair<const uint8_t*, std::size_t> data_size_pair)
             :tx_size_(data_size_pair.second)
-            ,type_(type)
-        {
-                PlaceData(data_size_pair);
-        }
-
-        Task(std::pair<const uint8_t*, std::size_t> data_size_pair, CallBackT call_back, TaskType type = transmit)
-                :call_back_(std::move(call_back))
-                ,tx_size_(data_size_pair.second)
-                ,type_(type)
+            ,type_(transmit)
         {
             PlaceData(data_size_pair);
         }
 
-        Task(std::size_t rx_size, CallBackT call_back, TaskType type = receive)
+        Task(std::pair<const uint8_t*, std::size_t> data_size_pair, CallBackT call_back)
+                :call_back_(std::move(call_back))
+                ,tx_size_(data_size_pair.second)
+                ,type_(transmit)
+        {
+            PlaceData(data_size_pair);
+        }
+
+        Task(std::size_t rx_size, CallBackT call_back)
                 :call_back_(std::move(call_back))
                 ,rx_size_(rx_size)
-                ,type_(type)
+                ,type_(receive)
         {}
 
-        Task(std::size_t rx_size, TaskType type = receive)
+        Task(std::size_t rx_size)
                 :rx_size_(rx_size)
-                ,type_(type)
+                ,type_(receive)
         {}
 
-        Task(std::pair<const uint8_t*, std::size_t> data_size_pair, std::size_t rx_size, CallBackT call_back, TaskType type = transmit_receive)
+        Task(std::pair<const uint8_t*, std::size_t> data_size_pair, std::size_t rx_size, CallBackT call_back)
             :call_back_(std::move(call_back))
             ,rx_size_(rx_size)
             ,tx_size_(data_size_pair.second)
-            ,type_(type)
+            ,type_(transmit_receive)
         {
-                PlaceData(data_size_pair);
+            PlaceData(data_size_pair);
         }
 
     private:

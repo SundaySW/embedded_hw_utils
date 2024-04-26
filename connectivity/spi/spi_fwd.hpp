@@ -13,7 +13,6 @@
 #define SPI_POLL() SPI_Driver::global().ProcessTask()
 
 //#define call_back_capacity (32U)
-#define buffer_size (4)
 #define task_q_size (20)
 
 namespace connectivity{

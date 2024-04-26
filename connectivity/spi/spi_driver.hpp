@@ -75,8 +75,9 @@ struct SPI_Driver{
         }
     }
 
-    void PlaceTask(auto&& ... args){
-        tasks_.push(SpiTask(std::forward<decltype(args)>(args)...));
+    template<typename ...Types>
+    void PlaceTask(Types&& ...args){
+        tasks_.push(SpiTask(std::forward<Types>(args)...));
     }
 
     auto operator()(){
