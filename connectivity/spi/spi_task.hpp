@@ -1,9 +1,8 @@
 #pragma once
 
-#include "spi_fwd.hpp"
+#include "embedded_hw_utils/IO/pin.hpp"
 
-#include "embedded_hw_utils/utils/task.hpp"
-//#include "embedded_hw_utils/utils/meta_utils.hpp"
+#include "embedded_hw_utils/meta/meta_utils.hpp"
 
 namespace connectivity{
 

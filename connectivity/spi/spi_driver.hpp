@@ -1,24 +1,31 @@
 #pragma once
 
-#include "spi_fwd.hpp"
-#include "spi_task.hpp"
-
 #include <utility>
 #include <optional>
 
+#include "embedded_hw_utils/utils/task_queue.hpp"
+#include "async_tasks/async_tim_tasks.hpp"
+#include "embedded_hw_utils/utils/task.hpp"
+#include "spi_task.hpp"
+
+#define SPI_DRIVER_ SPI_Driver::global()
+#define SPI_CLEAR_Q_() SPI_Driver::global().ClearQueue()
+#define task_q_size (20)
+
 namespace connectivity{
 
+using namespace utils;
 struct SPI_Driver{
 
-    explicit SPI_Driver(SpiHandleT* hspi)
+    explicit SPI_Driver(SPI_HandleTypeDef* hspi)
     {
         spi_handler_ = hspi;
         PLACE_ASYNC_QUICKEST([&]{
-            SPI_POLL();
+            ProcessTask();
         });
     }
 
-    static void SetHandler(SpiHandleT* spiHandle){
+    static void SetHandler(SPI_HandleTypeDef* spiHandle){
         spi_handler_ = spiHandle;
     }
 
@@ -87,17 +94,17 @@ private:
     bool in_process_{false};
     SpiTask current_task_;
     TaskQueue<SpiTask, task_q_size> tasks_;
-    static inline SpiHandleT* spi_handler_;
+    static inline SPI_HandleTypeDef* spi_handler_;
 };
 
 extern "C"
 {
-    void HAL_SPI_TxCpltCallback(SpiHandleT *hspi) {
+    void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi){
         if(hspi == SPI_Driver::global()())
             SPI_Driver::global().TxCallbackHandler();
     }
 
-    void HAL_SPI_RxCpltCallback(SpiHandleT *hspi) {
+    void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
         if(hspi == SPI_Driver::global()())
             SPI_Driver::global().RxCallbackHandler();
     }

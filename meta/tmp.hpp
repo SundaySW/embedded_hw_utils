@@ -1,15 +1,11 @@
 #pragma once
 
-#include <iostream>
 #include <tuple>
 #include <type_traits>
-#include <string_view>
 #include <functional>
 
-void do_something(bool a, int b, std::string_view c)
-{
-    std::cout << c << " " << b << " " << std::boolalpha << a << std::endl;
-}
+void do_something(bool a, int b, int* c)
+{}
 
 template<typename R, typename... Args>
 struct FunctionSignature;
