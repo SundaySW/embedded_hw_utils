@@ -2,12 +2,12 @@
 
 #include "embedded_hw_utils/IO/pin.hpp"
 
-#include "embedded_hw_utils/meta/meta_utils.hpp"
+#include "spi_fwd.hpp"
 
 namespace connectivity{
 
-using TaskT = utils::Task<>;
 using PinT = PIN_BOARD::PIN<PIN_BOARD::PinWriteable>*;
+using TaskT = utils::Task<>;
 
 struct SpiTask: TaskT{
     void ChipRelease(){

@@ -92,21 +92,33 @@ namespace PIN_BOARD{
                            | (pullState << (position_ * 2U));
         }
 
+        constexpr void CalcPosition(){
+            for(uint8_t i = 0; i < 32; i++)
+                if(pin_ >> i)
+                    position_ = i;
+        }
+
+        PIN() = default;
+
+        constexpr void Reset(GPIO_TypeDef* incomePortPtr, uint16_t incomePin){
+            port_ = incomePortPtr,
+            pin_ = incomePin;
+            CalcPosition();
+        }
+
         constexpr explicit PIN(GPIO_TypeDef* incomePortPtr, uint16_t incomePin)
                 : port_(incomePortPtr),
                   pin_(incomePin)
         {
-            for(uint8_t i = 0; i < 32; i++)
-                if(pin_ >> i)
-                    position_ = i;
+            CalcPosition();
         };
 
     protected:
     private:
         LOGIC_LEVEL currentState_ = LOW;
-        GPIO_TypeDef* port_;
-        uint16_t pin_;
-        uint8_t position_;
+        GPIO_TypeDef* port_{nullptr};
+        uint16_t pin_{0};
+        uint8_t position_{0};
         bool inverted_ = false;
 
         template<typename T = InterfaceType>
