@@ -4,11 +4,7 @@
 #include <algorithm>
 
 #include "embedded_hw_utils/IO/pin.hpp"
-
 #include "stm32g4xx_hal_tim.h"
-#include "app_config.hpp"
-
-using namespace PIN_BOARD;
 
 namespace Motor{
     enum class Direction{
@@ -36,19 +32,19 @@ namespace Motor{
 namespace StepperMotor{
     struct StepperCfg
     {
-        PIN<PinWriteable> step_pin;
-        PIN<PinWriteable> direction_pin;
-        PIN<PinWriteable> enable_pin;
+        pin_board::PIN<pin_board::Writeable> step_pin;
+        pin_board::PIN<pin_board::Writeable> direction_pin;
+        pin_board::PIN<pin_board::Writeable> enable_pin;
         TIM_HandleTypeDef* htim {};
-        uint32_t timChannel {0x00000000U};
+        uint32_t timChannel {0x00000001U};
         uint32_t criticalNofSteps {};
-        bool directionInverted {};
+        bool directionInverted {false};
     };
 
     using namespace Motor;
     class StepperMotorBase{
     public:
-        using MOTOR_IOS = PIN<PinWriteable>;
+        using MOTOR_IOS = pin_board::PIN<pin_board::Writeable>;
 
         const StepperMotorBase& operator=(const StepperMotorBase &) = delete;
         StepperMotorBase& operator=(StepperMotorBase &) = delete;
@@ -84,7 +80,7 @@ namespace StepperMotor{
             if(motorMoving_){
                 HAL_TIM_PWM_Stop_IT(htim_, timChannel_);
 //                enable_pin_.setValue(HIGH);
-                step_pin_.setValue(LOW);
+                step_pin_.setValue(pin_board::LOW);
                 motorMoving_ = false;
                 mode_ = Mode::IDLE;
                 event_ = EVENT_STOP;
@@ -96,7 +92,7 @@ namespace StepperMotor{
             V_ = Vmin_;
             mode_ = Mode::ACCEL;
             CalcRegValue_();
-            currentStep_ = 0;
+            task_step_ = 0;
             accel_step_ = 0;
             uSec_accel_ = 0;
         }
@@ -141,7 +137,7 @@ namespace StepperMotor{
 
         inline static uint32_t kCriticalNofSteps_ {0};
         int steps_to_go_ {0};
-        int currentStep_ {0};
+        int task_step_ {0};
         int accel_step_ {0};
 
         uint32_t V_ {0};
@@ -161,11 +157,11 @@ namespace StepperMotor{
             if(!motorMoving_){
                 accel_step_ = 0;
                 uSec_accel_ = 0;
-                currentStep_ = 0;
+                task_step_ = 0;
                 mode_ = Mode::ACCEL;
                 motorMoving_ = true;
                 steps_to_go_ = steps;
-                enable_pin_.setValue(LOW);
+                enable_pin_.setValue(pin_board::LOW);
                 CalcRegValue_();
                 HAL_TIM_PWM_Start_IT(htim_, timChannel_);
             }
@@ -185,8 +181,8 @@ namespace StepperMotor{
             currentDirection_ = newDirection;
             if(directionInverted_) direction_pin_.setValue(
                         static_cast<bool>(currentDirection_) ?
-                        LOGIC_LEVEL(Direction::BACKWARDS) : LOGIC_LEVEL(Direction::FORWARD));
-            else direction_pin_.setValue(LOGIC_LEVEL(currentDirection_));
+                        pin_board::logic_level(Direction::BACKWARDS) : pin_board::logic_level(Direction::FORWARD));
+            else direction_pin_.setValue(pin_board::logic_level(currentDirection_));
         }
 
         void CalcSpeed_(){
@@ -215,7 +211,7 @@ namespace StepperMotor{
 
                 case Mode::CONST:
                 {
-                    if(currentStep_ + accel_step_ >= steps_to_go_){
+                    if(task_step_ + accel_step_ >= steps_to_go_){
                         event_ = EVENT_CSE;
                         mode_ = Mode::DECCEL;
                     }
@@ -238,7 +234,7 @@ namespace StepperMotor{
             }
 
             if (mode_ == Mode::ACCEL || mode_ == Mode::CONST || mode_ == Mode::DECCEL)
-                currentStep_++;
+                task_step_++;
         }
     };
 

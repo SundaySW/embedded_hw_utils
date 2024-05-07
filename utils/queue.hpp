@@ -3,10 +3,12 @@
 #include <cstring>
 #include <utility>
 
+namespace utils{
+
 template<typename T, std::size_t Size>
-class TaskQueue{
+class Queue{
 public:
-    TaskQueue()=default;
+    Queue()=default;
 
     template<typename TT>
     bool push(TT&& new_elem){
@@ -56,3 +58,5 @@ private:
         return head_;
     }
 };
+
+}//namespace utils

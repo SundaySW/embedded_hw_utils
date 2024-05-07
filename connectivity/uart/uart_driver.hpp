@@ -1,13 +1,13 @@
 #pragma once
 
-#include "uart_port.hpp"
-
-#define UART_DRIVER_(handle) Uart_Driver::global().GetPort(handle)
-#define UART_CLEAR_Q_(handle) Uart_Driver::global().GetPort(handle)->ClearQueue()
+#include "embedded_hw_utils/connectivity/uart/impl/uart_port.hpp"
+#define UART_driver_place_port_(port) Uart_Driver::global().PlacePort(port)
+#define UART_driver_(handle) Uart_Driver::global().GetPort(handle)
+#define UART_clear_queue_(handle) Uart_Driver::global().GetPort(handle)->ClearQueue()
 
 namespace connectivity{
 
-struct Uart_Driver final: InterfaceDriver<UartPort, k_interface_cnt>{
+struct Uart_Driver final: InterfaceDriver<UartPort, uart_interface_cnt>{
     static Uart_Driver& global(){
         static auto instance = Uart_Driver();
         return instance;

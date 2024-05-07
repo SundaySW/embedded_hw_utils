@@ -3,38 +3,38 @@
 #include <cstdint>
 #include "type_traits"
 
-namespace PIN_BOARD{
+namespace pin_board{
 
-    enum LOGIC_LEVEL{
+    enum logic_level{
         LOW = 0,
         HIGH = 1,
     };
 
-    enum PullState: uint8_t{
+    enum pull_state: uint8_t{
         no_pull,
         pull_up,
         pull_down
     };
 
-    struct PinReadable {};
+    struct Readable {};
 
-    struct PinWriteable {};
+    struct Writeable {};
 
-    struct PinSwitchable {};
+    struct Switchable {};
 
     template<typename InterfaceType>
     class PIN{
     public:
         template<typename T = InterfaceType>
-        requires(std::is_base_of<PinReadable, T>::value || std::is_base_of<PinSwitchable, T>::value)
-        constexpr LOGIC_LEVEL getState(){
+        requires(std::is_base_of<Readable, T>::value || std::is_base_of<Switchable, T>::value)
+        constexpr logic_level getState(){
             currentState_ = getValue();
             return currentState_;
         }
 
         template<typename T = InterfaceType>
-        requires(std::is_base_of<PinWriteable, T>::value || std::is_base_of<PinSwitchable, T>::value)
-        constexpr void setValue(LOGIC_LEVEL value){
+        requires(std::is_base_of<Writeable, T>::value || std::is_base_of<Switchable, T>::value)
+        constexpr void setValue(logic_level value){
             if(inverted_){
                 if (value) port_->BRR = (uint32_t)pin_;
                 else port_->BSRR = (uint32_t)pin_;
@@ -46,7 +46,7 @@ namespace PIN_BOARD{
         }
 
         template<typename T = InterfaceType>
-        requires(std::is_base_of<PinWriteable, T>::value || std::is_base_of<PinSwitchable, T>::value)
+        requires(std::is_base_of<Writeable, T>::value || std::is_base_of<Switchable, T>::value)
         constexpr void togglePinState(){
             uint32_t odr = port_->ODR;
             port_->BSRR = ((odr & pin_) << 16U) | (~odr & pin_);
@@ -63,8 +63,8 @@ namespace PIN_BOARD{
             return pin_;
         }
 
-        [[nodiscard]] constexpr LOGIC_LEVEL* GetPinStatePtr(){
-            return static_cast<LOGIC_LEVEL*>(&currentState_);
+        [[nodiscard]] constexpr logic_level* GetPinStatePtr(){
+            return static_cast<logic_level*>(&currentState_);
         }
 
 //        constexpr void setAFSpi(uint8_t spi_n = 1){
@@ -86,7 +86,7 @@ namespace PIN_BOARD{
             port_->MODER = port_->MODER & ~(0x03 << (2 * position_));
         }
 
-        constexpr void setPull(PullState pullState){
+        constexpr void setPull(pull_state pullState){
             port_->PUPDR = port_->PUPDR
                            & (~(GPIO_PUPDR_PUPD0 << (position_ * 2U)))
                            | (pullState << (position_ * 2U));
@@ -98,7 +98,7 @@ namespace PIN_BOARD{
                     position_ = i;
         }
 
-        PIN() = default;
+        PIN() = delete;
 
         constexpr void Reset(GPIO_TypeDef* incomePortPtr, uint16_t incomePin){
             port_ = incomePortPtr,
@@ -107,33 +107,33 @@ namespace PIN_BOARD{
         }
 
         constexpr explicit PIN(GPIO_TypeDef* incomePortPtr, uint16_t incomePin)
-                : port_(incomePortPtr),
-                  pin_(incomePin)
+            : port_(incomePortPtr),
+              pin_(incomePin)
         {
             CalcPosition();
         };
 
     protected:
     private:
-        LOGIC_LEVEL currentState_ = LOW;
+        logic_level currentState_ = LOW;
         GPIO_TypeDef* port_{nullptr};
         uint16_t pin_{0};
         uint8_t position_{0};
         bool inverted_ = false;
 
         template<typename T = InterfaceType>
-        requires(std::is_base_of<PinReadable, T>::value || std::is_base_of<PinSwitchable, T>::value)
-        constexpr LOGIC_LEVEL getValue(){
-            LOGIC_LEVEL retVal;
-            if((port_->IDR & pin_) != (uint32_t)LOGIC_LEVEL::LOW)
-                retVal = LOGIC_LEVEL::HIGH;
+        requires(std::is_base_of<Readable, T>::value || std::is_base_of<Switchable, T>::value)
+        constexpr logic_level getValue(){
+            logic_level retVal;
+            if((port_->IDR & pin_) != (uint32_t)logic_level::LOW)
+                retVal = logic_level::HIGH;
             else
-                retVal = LOGIC_LEVEL::LOW;
+                retVal = logic_level::LOW;
             if(inverted_)
-                return (retVal ? LOGIC_LEVEL::LOW : LOGIC_LEVEL::HIGH);
+                return (retVal ? logic_level::LOW : logic_level::HIGH);
             else
                 return retVal;
         }
     };
 
-} // namespace PIN_BOARD
+} // namespace pin_board

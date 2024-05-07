@@ -1,14 +1,14 @@
 #pragma once
 
-#include "spi_port.hpp"
-#include "spi_fwd.hpp"
+#include "embedded_hw_utils/connectivity/spi/impl/spi_port.hpp"
+#include "embedded_hw_utils/connectivity/spi/impl/spi_fwd.hpp"
 
 #define SPI_DRIVER_(handle) SPI_Driver::global().GetPort(handle)
 #define SPI_CLEAR_Q_() SPI_Driver::global().GetPort(handle)->ClearQueue()
 
 namespace connectivity{
 
-    struct SPI_Driver final: InterfaceDriver<SpiPort, k_interface_cnt>{
+    struct SPI_Driver final: InterfaceDriver<SpiPort, spi_interface_cnt>{
         static SPI_Driver& global(){
             static auto instance = SPI_Driver();
             return instance;

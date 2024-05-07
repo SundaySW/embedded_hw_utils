@@ -19,7 +19,7 @@
 #define W_DRIVE_DEF         (uint16_t)0b0'110'01'10'01'01'10'10
 #define R_STATUS            (uint16_t)0b1'111
 
-using namespace PIN_BOARD;
+using namespace pin_board;
 
 namespace DRV8711{
     enum class MODE: uint16_t{
@@ -31,7 +31,7 @@ namespace DRV8711{
 
     class DRV8711{
     public:
-        explicit DRV8711(SPI_HandleTypeDef* spi, PIN<PinWriteable>&& cs_pin)
+        explicit DRV8711(SPI_HandleTypeDef* spi, PIN<Writeable>&& cs_pin)
             :spi_(spi),
              cs_pin_(cs_pin)
         {
@@ -69,7 +69,7 @@ namespace DRV8711{
         }
 
         uint8_t data_ [2] {0,};
-        PIN<PinWriteable> cs_pin_;
+        PIN<Writeable> cs_pin_;
         SPI_HandleTypeDef* spi_;
     };
 }

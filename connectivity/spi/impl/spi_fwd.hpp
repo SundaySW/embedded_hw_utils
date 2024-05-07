@@ -6,8 +6,8 @@
 #include "embedded_hw_utils/utils/interface_driver.hpp"
 
 namespace connectivity{
-    constexpr std::size_t k_buffer_size = 4;
-    constexpr std::size_t k_interface_cnt = 8;
-    constexpr std::size_t k_queue_size = 20;
+    constexpr std::size_t spi_buffer_size = 4;
+    constexpr std::size_t spi_interface_cnt = 1;
+    constexpr std::size_t spi_queue_size = 10;
     using SpiHandleT = SPI_HandleTypeDef*;
 }

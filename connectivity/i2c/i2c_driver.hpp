@@ -4,14 +4,15 @@
 
 #include "async_tim_tasks/async_tim_tasks.hpp"
 
-#include "i2c_port.hpp"
+#include "embedded_hw_utils/connectivity/i2c/impl/i2c_port.hpp"
 
-#define I2C_DRIVER_(handle) I2CDriver::global().GetPort(handle)
-#define I2C_CLEAR_Q_() I2CDriver::global().GetPort(handle)->ClearQueue()
+#define I2C_driver_place_port_(port) I2CDriver::global().PlacePort(port)
+#define I2C_driver_(handle) I2CDriver::global().GetPort(handle)
+#define I2C_clear_queue_() I2CDriver::global().GetPort(handle)->ClearQueue()
 
 namespace connectivity{
 
-struct I2CDriver final: InterfaceDriver<I2CPort, 1>{
+struct I2CDriver final: InterfaceDriver<I2CPort, i2c_interface_cnt>{
 
     static I2CDriver& global(){
         static auto instance = I2CDriver();

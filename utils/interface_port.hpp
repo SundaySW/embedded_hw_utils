@@ -3,7 +3,7 @@
 #include <utility>
 #include <optional>
 
-#include "embedded_hw_utils/utils/task_queue.hpp"
+#include "embedded_hw_utils/utils/queue.hpp"
 #include "embedded_hw_utils/utils/interface_task.hpp"
 
 namespace connectivity{
@@ -67,7 +67,7 @@ namespace connectivity{
     protected:
         bool in_process_ {false};
         Task_t current_task_;
-        TaskQueue<Task_t, Q_size> tasks_;
+        utils::Queue<Task_t, Q_size> tasks_;
         static inline Hadle_t handle_ {nullptr};
 
         virtual void TaskPreprocedure() = 0;

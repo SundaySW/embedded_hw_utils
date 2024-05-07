@@ -6,17 +6,18 @@
 
 namespace connectivity{
 
-using PinT = PIN_BOARD::PIN<PIN_BOARD::PinWriteable>*;
-using TaskT = utils::Task<>;
+using PinT = pin_board::PIN<pin_board::Writeable>*;
 
-struct SpiTask: TaskT{
+struct SpiTask: utils::Task<spi_buffer_size>{
+    using TaskT = utils::Task<spi_buffer_size>;
+
     void ChipRelease(){
         if(pin_)
-            pin_.value()->setValue(PIN_BOARD::HIGH);
+            pin_.value()->setValue(pin_board::HIGH);
     }
     void ChipSelect(){
         if(pin_)
-            pin_.value()->setValue(PIN_BOARD::LOW);
+            pin_.value()->setValue(pin_board::LOW);
     }
 
     template<typename ... Types>
@@ -42,7 +43,7 @@ struct SpiTask: TaskT{
 //    };
 
 private:
-    std::optional<PIN_BOARD::PIN<PIN_BOARD::PinWriteable>*> pin_;
+    std::optional<pin_board::PIN<pin_board::Writeable>*> pin_;
 };
 
 }//namespace connectivity

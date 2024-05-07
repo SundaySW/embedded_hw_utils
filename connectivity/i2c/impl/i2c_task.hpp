@@ -4,7 +4,7 @@
 
 namespace connectivity{
 
-using TaskT = utils::Task<k_buffer_size>;
+using TaskT = utils::Task<i2c_buffer_size>;
 
 struct I2CTask: TaskT{
 

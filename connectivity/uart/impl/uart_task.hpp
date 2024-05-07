@@ -4,8 +4,11 @@
 #include "uart_fwd.hpp"
 
 namespace connectivity{
-    using TaskT = utils::Task<k_buffer_size>;
-struct UartTask: TaskT{
+
+struct UartTask: utils::Task<uart_buffer_size>{
+
+    using TaskT = utils::Task<uart_buffer_size>;
+
     template<typename ... Types>
     UartTask(Types&&... args)
         :TaskT(std::forward<decltype(args)>(args)...)

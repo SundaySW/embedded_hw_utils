@@ -15,7 +15,7 @@ struct InputSignal{
         , debounce_time_(debounce_time)
     {}
 
-//    constexpr explicit InputSignal(PIN_BOARD::PIN<PIN_BOARD::PinReadable> pin, uint32_t debounce_time) noexcept
+//    constexpr explicit InputSignal(pin_board::PIN<pin_board::Readable> pin, uint32_t debounce_time) noexcept
 //        : pin_(pin)
 //        , debounce_time_(debounce_time)
 //    {}
@@ -40,9 +40,9 @@ struct InputSignal{
             active_time_ = 0;
 
         if(active_time_ >= debounce_time_)
-            SetState(PIN_BOARD::HIGH);
+            SetState(pin_board::HIGH);
         else
-            SetState(PIN_BOARD::LOW);
+            SetState(pin_board::LOW);
     }
 
     constexpr void SetDebounceTime(uint32_t time){
@@ -53,17 +53,17 @@ struct InputSignal{
         pin_.setInverted();
     }
 
-    [[nodiscard]] constexpr PIN_BOARD::LOGIC_LEVEL getState() const {
+    [[nodiscard]] constexpr pin_board::logic_level getState() const {
         return signal_state_;
     }
 private:
-    PIN_BOARD::PIN<PIN_BOARD::PinReadable> pin_;
-    PIN_BOARD::LOGIC_LEVEL signal_state_ {PIN_BOARD::LOW};
+    pin_board::PIN<pin_board::Readable> pin_;
+    pin_board::logic_level signal_state_ {pin_board::LOW};
     uint32_t debounce_time_;
     uint32_t active_time_{0};
     bool last_pin_connection_state_{false};
 
-    constexpr void SetState(PIN_BOARD::LOGIC_LEVEL level){
+    constexpr void SetState(pin_board::logic_level level){
         signal_state_ = level;
     }
 };

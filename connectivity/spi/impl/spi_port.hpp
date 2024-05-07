@@ -5,7 +5,7 @@
 
 namespace connectivity{
 
-struct SpiPort final: InterfacePort<SpiHandleT, SpiTask, k_queue_size>{
+struct SpiPort final: InterfacePort<SpiHandleT, SpiTask, spi_queue_size>{
 //        explicit SpiPort(SpiHandleT handler)
 //            :InterfacePort(handler)
 //        {}
@@ -18,13 +18,13 @@ struct SpiPort final: InterfacePort<SpiHandleT, SpiTask, k_queue_size>{
             switch (current_task_.Type()){
                 case utils::transmit_receive:
                     HAL_SPI_Transmit_DMA(handle_, current_task_.TxData(), current_task_.TxSize());
-                    HAL_SPI_Receive_DMA(handle_, current_task_.TxData(), current_task_.TxSize());
+                    HAL_SPI_Receive_DMA(handle_, current_task_.RxData(), current_task_.RxSize());
                     break;
                 case utils::transmit:
                     HAL_SPI_Transmit_DMA(handle_, current_task_.TxData(), current_task_.TxSize());
                     break;
                 case utils::receive:
-                    HAL_SPI_Receive_DMA(handle_, current_task_.TxData(), current_task_.TxSize());
+                    HAL_SPI_Receive_DMA(handle_, current_task_.RxData(), current_task_.RxSize());
                     break;
             }
         }

@@ -27,8 +27,8 @@ namespace MotorSpecial {
 
     struct AccelMotor: StepperMotorBase {
 
-        explicit AccelMotor(AccelCfg cfg)
-            : StepperMotorBase(cfg.stepperCfg)
+        explicit AccelMotor(AccelCfg& cfg)
+            :StepperMotorBase(cfg.stepperCfg)
         {
             UpdateConfig(cfg);
         }

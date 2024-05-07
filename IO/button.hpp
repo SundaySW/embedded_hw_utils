@@ -9,7 +9,7 @@ struct Button{
 //        pin_.setInverted();
     }
 
-    PIN_BOARD::PIN<PIN_BOARD::PinReadable> pin_;
+    pin_board::PIN<pin_board::Readable> pin_;
 
     constexpr uint16_t operator()() const{
         return pin_.getPin();
@@ -17,7 +17,7 @@ struct Button{
     constexpr bool operator==(uint16_t otherPin) const{
         return pin_.getPin() == otherPin;
     }
-    constexpr PIN_BOARD::LOGIC_LEVEL getState(){
+    constexpr pin_board::logic_level getState(){
         return pin_.getState();
     }
 };
