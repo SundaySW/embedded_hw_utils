@@ -17,10 +17,15 @@ namespace utils{
 
     template<std::size_t buffer_size = 8>
     struct Task{
-        void PlaceData(auto data_size_pair){
-            auto&& [tx_data_p, size] = data_size_pair;
-            if(size <= sizeof tx_data_)
-                std::memcpy(tx_data_.data(), tx_data_p, size);
+//        void PlaceData(auto data_size_pair){
+//            auto&& [tx_data_p, size] = data_size_pair;
+//            if(size <= sizeof tx_data_)
+//                std::memcpy(tx_data_.data(), tx_data_p, size);
+//        }
+
+        void PlaceData(std::span<uint8_t> data){
+            if(data.size() <= sizeof tx_data_)
+                std::memcpy(tx_data_.data(), data.data(), data.size());
         }
 
         void CallBack(){
@@ -35,19 +40,19 @@ namespace utils{
         [[nodiscard]] std::size_t RxSize() const { return rx_size_; }
 
         Task() = default;
-        Task(std::pair<const uint8_t*, std::size_t> data_size_pair)
-            :tx_size_(data_size_pair.second)
-            ,type_(transmit)
+        Task(std::span<uint8_t> data)
+                :tx_size_(data.size())
+                ,type_(transmit)
         {
-            PlaceData(data_size_pair);
+            PlaceData(data);
         }
 
-        Task(std::pair<const uint8_t*, std::size_t> data_size_pair, CallBackT call_back)
+        Task(std::span<uint8_t> data, CallBackT call_back)
             :call_back_(std::move(call_back))
-            ,tx_size_(data_size_pair.second)
+            ,tx_size_(data.size())
             ,type_(transmit)
         {
-            PlaceData(data_size_pair);
+            PlaceData(data);
         }
 
         Task(std::size_t rx_size, CallBackT call_back)
@@ -61,13 +66,13 @@ namespace utils{
             ,type_(receive)
         {}
 
-        Task(std::pair<const uint8_t*, std::size_t> data_size_pair, std::size_t rx_size, CallBackT call_back)
+        Task(std::span<uint8_t> data, std::size_t rx_size, CallBackT call_back)
             :call_back_(std::move(call_back))
             ,rx_size_(rx_size)
-            ,tx_size_(data_size_pair.second)
+            ,tx_size_(data.size())
             ,type_(transmit_receive)
         {
-            PlaceData(data_size_pair);
+            PlaceData(data);
         }
 
     private:

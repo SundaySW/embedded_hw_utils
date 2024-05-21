@@ -6,7 +6,7 @@
 namespace connectivity{
 
 
-struct UartPort final: InterfacePort<UartHandleT, TaskT, uart_queue_size>{
+struct UartPort final: InterfacePort<UartHandleT, UartTask, uart_queue_size>{
 
     void ErrorHandler(){}
 

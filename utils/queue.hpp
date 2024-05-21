@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <utility>
+#include <array>
 
 namespace utils{
 
@@ -45,7 +46,7 @@ private:
     std::size_t head_{0};
     std::size_t tail_{0};
     std::size_t elems_{0};
-    T storage_[Size];
+    std::array<T, Size> storage_;
 
     std::size_t SetTailIdx(){
         if(++tail_ == Size)

@@ -10,9 +10,9 @@ struct InputSignal{
         no_device
     };
 
-    constexpr explicit InputSignal(GPIO_TypeDef* port, uint16_t pin, uint32_t debounce_time) noexcept
-        : pin_(port, pin)
-        , debounce_time_(debounce_time)
+    explicit InputSignal(pin_board::PIN<pin_board::Readable> pin, uint32_t debounce_time) noexcept
+        :pin_(pin)
+        ,debounce_time_(debounce_time)
     {}
 
 //    constexpr explicit InputSignal(pin_board::PIN<pin_board::Readable> pin, uint32_t debounce_time) noexcept
@@ -61,7 +61,7 @@ private:
     pin_board::logic_level signal_state_ {pin_board::LOW};
     uint32_t debounce_time_;
     uint32_t active_time_{0};
-    bool last_pin_connection_state_{false};
+    bool last_pin_connection_state_ {false};
 
     constexpr void SetState(pin_board::logic_level level){
         signal_state_ = level;
