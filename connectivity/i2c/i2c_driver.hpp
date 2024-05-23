@@ -6,7 +6,7 @@
 
 #include "embedded_hw_utils/connectivity/i2c/impl/i2c_port.hpp"
 
-#define I2C_driver_place_port_(port) I2CDriver::global().PlacePort(port)
+#define I2C_driver_place_port_(port) connectivity::I2CDriver::global().PlacePort(port)
 #define I2C_driver_(handle) I2CDriver::global().GetPort(handle)
 #define I2C_clear_queue_() I2CDriver::global().GetPort(handle)->ClearQueue()
 

@@ -8,11 +8,14 @@ namespace connectivity{
 
 template<typename Port_t, std::size_t I_size>
 struct InterfaceDriver{
+    void ProcessTasks(){
+        for(auto& port: ports_)
+            port.ProcessTask();
+    }
     InterfaceDriver(){
-        PLACE_ASYNC_QUICKEST([&]{
-            for(auto& port: ports_)
-                port.ProcessTask();
-        });
+        PLACE_ASYNC_QUICKEST(task::CB(this, [](void* context){
+            static_cast<InterfaceDriver*>(context)->ProcessTasks();
+        }));
     }
     auto GetPort(typename Port_t::Hadle_t handle){
         if(auto it = std::ranges::find(ports_, handle, &Port_t::GetHandle); it != ports_.end())

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "embedded_hw_utils/connectivity/uart/impl/uart_port.hpp"
-#define UART_driver_place_port_(port) Uart_Driver::global().PlacePort(port)
-#define UART_driver_(handle) Uart_Driver::global().GetPort(handle)
-#define UART_clear_queue_(handle) Uart_Driver::global().GetPort(handle)->ClearQueue()
+#define UART_driver_place_port_(port) connectivity::Uart_Driver::global().PlacePort(port)
+#define UART_driver_(handle) connectivity::Uart_Driver::global().GetPort(handle)
+#define UART_clear_queue_(handle) connectivity::Uart_Driver::global().GetPort(handle)->ClearQueue()
 
 namespace connectivity{
 

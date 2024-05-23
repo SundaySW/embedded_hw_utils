@@ -6,8 +6,10 @@
 #include <cstdint>
 #include <optional>
 
+#include "embedded_hw_utils/utils/task_callback.hpp"
+
 namespace utils{
-    using CallBackT = std::function<void(uint8_t*)>;
+    using CallBackT = task::CallBack<uint8_t*>;
 
     enum TaskType{
         transmit,

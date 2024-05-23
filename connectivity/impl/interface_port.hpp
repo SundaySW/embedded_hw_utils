@@ -4,7 +4,7 @@
 #include <optional>
 
 #include "embedded_hw_utils/utils/queue.hpp"
-#include "embedded_hw_utils/utils/interface_task.hpp"
+#include "interface_task.hpp"
 
 namespace connectivity{
     template<typename Handle_type, typename Task_t, std::size_t Q_size>

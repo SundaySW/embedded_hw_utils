@@ -4,7 +4,7 @@
 #include "fdcan.h"
 #include "impl/can_port.hpp"
 
-#define CAN_driver_() CanDriver::global()
+#define CAN_driver_() connectivity::CanDriver::global()
 
 namespace connectivity{
 
@@ -54,9 +54,9 @@ struct CanDriver{
 
 private:
     CanDriver(){
-        PLACE_ASYNC_QUICKEST([&]{
-            PollPort();
-        });
+        PLACE_ASYNC_QUICKEST(task::CB(this, [](void* context){
+            static_cast<CanDriver*>(context)->PollPort();
+        }));
     }
     FDCAN_RxHeaderTypeDef header_;
     std::array<uint8_t, 8> rx_data_;
