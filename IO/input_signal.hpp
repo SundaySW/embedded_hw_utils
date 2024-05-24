@@ -10,7 +10,7 @@ struct InputSignal{
         no_device
     };
 
-    explicit InputSignal(pin_board::PIN<pin_board::Readable> pin, uint32_t debounce_time) noexcept
+    explicit InputSignal(pin_board::PIN<pin_board::Switchable> pin, uint32_t debounce_time) noexcept
         :pin_(pin)
         ,debounce_time_(debounce_time)
     {}
@@ -57,7 +57,7 @@ struct InputSignal{
         return signal_state_;
     }
 private:
-    pin_board::PIN<pin_board::Readable> pin_;
+    pin_board::PIN<pin_board::Switchable> pin_;
     pin_board::logic_level signal_state_ {pin_board::LOW};
     uint32_t debounce_time_;
     uint32_t active_time_{0};

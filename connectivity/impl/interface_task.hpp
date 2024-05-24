@@ -5,11 +5,13 @@
 #include <functional>
 #include <cstdint>
 #include <optional>
+#include <span>
 
 #include "embedded_hw_utils/utils/task_callback.hpp"
+#include "embedded_hw_utils/utils/tx_data_pair.hpp"
 
-namespace utils{
-    using CallBackT = task::CallBack<uint8_t*>;
+namespace connectivity{
+    using CB = utils::task::CallBack<uint8_t*>;
 
     enum TaskType{
         transmit,
@@ -19,15 +21,9 @@ namespace utils{
 
     template<std::size_t buffer_size = 8>
     struct Task{
-//        void PlaceData(auto data_size_pair){
-//            auto&& [tx_data_p, size] = data_size_pair;
-//            if(size <= sizeof tx_data_)
-//                std::memcpy(tx_data_.data(), tx_data_p, size);
-//        }
-
-        void PlaceData(std::span<uint8_t> data){
-            if(data.size() <= sizeof tx_data_)
-                std::memcpy(tx_data_.data(), data.data(), data.size());
+        void PlaceData(utils::TxData data){
+            if(data.size <= sizeof tx_data_)
+                std::memcpy(tx_data_.data(), data.data_ptr, data.size);
         }
 
         void CallBack(){
@@ -42,22 +38,22 @@ namespace utils{
         [[nodiscard]] std::size_t RxSize() const { return rx_size_; }
 
         Task() = default;
-        Task(std::span<uint8_t> data)
-                :tx_size_(data.size())
-                ,type_(transmit)
-        {
-            PlaceData(data);
-        }
-
-        Task(std::span<uint8_t> data, CallBackT call_back)
-            :call_back_(std::move(call_back))
-            ,tx_size_(data.size())
+        Task(utils::TxData data)
+            :tx_size_(data.size)
             ,type_(transmit)
         {
             PlaceData(data);
         }
 
-        Task(std::size_t rx_size, CallBackT call_back)
+        Task(utils::TxData data, CB call_back)
+            :call_back_(std::move(call_back))
+            ,tx_size_(data.size)
+            ,type_(transmit)
+        {
+            PlaceData(data);
+        }
+
+        Task(std::size_t rx_size, CB call_back)
             :call_back_(std::move(call_back))
             ,rx_size_(rx_size)
             ,type_(receive)
@@ -68,10 +64,10 @@ namespace utils{
             ,type_(receive)
         {}
 
-        Task(std::span<uint8_t> data, std::size_t rx_size, CallBackT call_back)
+        Task(utils::TxData data, std::size_t rx_size, CB call_back)
             :call_back_(std::move(call_back))
             ,rx_size_(rx_size)
-            ,tx_size_(data.size())
+            ,tx_size_(data.size)
             ,type_(transmit_receive)
         {
             PlaceData(data);
@@ -83,6 +79,6 @@ namespace utils{
         std::array<uint8_t, buffer_size> tx_data_{0,};
         std::size_t rx_size_;
         std::size_t tx_size_;
-        std::optional<CallBackT> call_back_;
+        std::optional<CB> call_back_;
     };
 }

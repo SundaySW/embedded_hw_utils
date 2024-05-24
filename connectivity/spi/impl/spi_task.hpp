@@ -1,15 +1,17 @@
 #pragma once
 
 #include "embedded_hw_utils/IO/pin.hpp"
+#include "embedded_hw_utils/meta/meta_utils.hpp"
 
 #include "spi_fwd.hpp"
 
-namespace connectivity{
+namespace connectivity::spi{
+
+using TaskT = Task<spi_buffer_size>;
 
 using PinT = pin_board::PIN<pin_board::Writeable>*;
 
-struct SpiTask: utils::Task<spi_buffer_size>{
-    using TaskT = utils::Task<spi_buffer_size>;
+struct SpiTask: TaskT{
 
     void ChipRelease(){
         if(pin_)

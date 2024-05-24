@@ -24,7 +24,7 @@ namespace connectivity{
         }
 
         void TxHandler(){
-            if(current_task_.Type() == utils::transmit_receive)
+            if(current_task_.Type() == connectivity::transmit_receive)
                 return;
             FinishTask();
         }

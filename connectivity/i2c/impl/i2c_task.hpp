@@ -2,12 +2,11 @@
 
 #include "i2c_fwd.hpp"
 
-namespace connectivity{
+namespace connectivity::i2c{
 
-using TaskT = utils::Task<i2c_buffer_size>;
+using TaskT = Task<i2c_buffer_size>;
 
 struct I2CTask: TaskT{
-
     template<typename ... Types>
     I2CTask(Types&&... args)
         :TaskT(std::forward<decltype(args)>(args)...)
@@ -15,7 +14,7 @@ struct I2CTask: TaskT{
 
     template<typename ... Types>
     I2CTask(uint16_t addr, Types&&... args)
-        :utils::Task<>(std::forward<decltype(args)>(args)...)
+        :TaskT(std::forward<decltype(args)>(args)...)
         ,addr_(addr)
     {}
 

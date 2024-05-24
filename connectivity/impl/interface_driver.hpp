@@ -13,9 +13,9 @@ struct InterfaceDriver{
             port.ProcessTask();
     }
     InterfaceDriver(){
-        PLACE_ASYNC_QUICKEST(task::CB(this, [](void* context){
+        PLACE_ASYNC_QUICKEST([](void* context){
             static_cast<InterfaceDriver*>(context)->ProcessTasks();
-        }));
+        });
     }
     auto GetPort(typename Port_t::Hadle_t handle){
         if(auto it = std::ranges::find(ports_, handle, &Port_t::GetHandle); it != ports_.end())

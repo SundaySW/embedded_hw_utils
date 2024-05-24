@@ -1,13 +1,13 @@
 #pragma once
 
-//#include "embedded_hw_utils/meta/meta_utils.hpp"
 #include "uart_fwd.hpp"
+//#include "embedded_hw_utils/meta/meta_utils.hpp"
 
-namespace connectivity{
+namespace connectivity::uart{
 
-struct UartTask: utils::Task<uart_buffer_size>{
+using TaskT = Task<uart_buffer_size>;
 
-    using TaskT = utils::Task<uart_buffer_size>;
+struct UartTask: TaskT{
 
     template<typename ... Types>
     UartTask(Types&&... args)

@@ -1,11 +1,11 @@
 #pragma once
 
 #include "embedded_hw_utils/connectivity/uart/impl/uart_port.hpp"
-#define UART_driver_place_port_(port) connectivity::Uart_Driver::global().PlacePort(port)
-#define UART_driver_(handle) connectivity::Uart_Driver::global().GetPort(handle)
-#define UART_clear_queue_(handle) connectivity::Uart_Driver::global().GetPort(handle)->ClearQueue()
+#define UART_driver_place_port_(port) connectivity::uart::Uart_Driver::global().PlacePort(port)
+#define UART_driver_(handle) connectivity::uart::Uart_Driver::global().GetPort(handle)
+#define UART_clear_queue_(handle) connectivity::uart::Uart_Driver::global().GetPort(handle)->ClearQueue()
 
-namespace connectivity{
+namespace connectivity::uart{
 
 struct Uart_Driver final: InterfaceDriver<UartPort, uart_interface_cnt>{
     static Uart_Driver& global(){
@@ -25,12 +25,12 @@ struct Uart_Driver final: InterfaceDriver<UartPort, uart_interface_cnt>{
 extern "C"
 {
     void HAL_UART_TxCpltCallback(UART_HandleTypeDef* huart) {
-        connectivity::Uart_Driver::global().TxHandler(huart);
+        connectivity::uart::Uart_Driver::global().TxHandler(huart);
     }
     void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {
-        connectivity::Uart_Driver::global().RxHandler(huart);
+        connectivity::uart::Uart_Driver::global().RxHandler(huart);
     }
     void HAL_UART_ErrorCallback(UART_HandleTypeDef* huart) {
-        connectivity::Uart_Driver::global().ErrorHandler(huart);
+        connectivity::uart::Uart_Driver::global().ErrorHandler(huart);
     }
 }

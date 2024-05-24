@@ -1,6 +1,6 @@
 #pragma once
 
-namespace task{
+namespace utils::task{
     template<typename ... Args>
     struct CallBack{
         using CB_t = void (*) (void*, Args ...);
@@ -15,6 +15,7 @@ namespace task{
         void operator()(Args ...args) const {
             cb_(context_, std::forward<Args>(args)...);
         }
+        bool HasContext()const{ return context_; }
     private:
         void* context_;
         CB_t cb_;

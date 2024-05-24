@@ -3,7 +3,7 @@
 #include "spi_task.hpp"
 #include "spi_fwd.hpp"
 
-namespace connectivity{
+namespace connectivity::spi{
 
 struct SpiPort final: InterfacePort<SpiHandleT, SpiTask, spi_queue_size>{
 //        explicit SpiPort(SpiHandleT handler)

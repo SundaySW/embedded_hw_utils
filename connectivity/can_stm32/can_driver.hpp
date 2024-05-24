@@ -54,9 +54,9 @@ struct CanDriver{
 
 private:
     CanDriver(){
-        PLACE_ASYNC_QUICKEST(task::CB(this, [](void* context){
+        PLACE_ASYNC_QUICKEST([](void* context){
             static_cast<CanDriver*>(context)->PollPort();
-        }));
+        });
     }
     FDCAN_RxHeaderTypeDef header_;
     std::array<uint8_t, 8> rx_data_;
