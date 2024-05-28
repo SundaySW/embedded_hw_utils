@@ -1,9 +1,5 @@
 #pragma once
 
-#include "ranges"
-
-#include "async_tim_tasks/async_tim_tasks.hpp"
-
 #include "embedded_hw_utils/connectivity/i2c/impl/i2c_port.hpp"
 
 #define I2C_PLACE_TASK(handle, args...)  \

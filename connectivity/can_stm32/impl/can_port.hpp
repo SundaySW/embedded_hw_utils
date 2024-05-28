@@ -1,9 +1,7 @@
 #pragma once
 
 #include <bit>
-#include <cstring>
 #include <utility>
-#include <span>
 #include <optional>
 
 #include "can_pack.hpp"
@@ -69,7 +67,7 @@ struct CANPort
     }
 private:
 	FDCAN_TxHeaderTypeDef header_;
+    FDCAN_HandleTypeDef* handler_ {nullptr};
     utils::Queue<CANPack, RXQ_SIZE> rx_queue_;
     utils::Queue<CANPack, TXQ_SIZE> tx_queue_;
-    FDCAN_HandleTypeDef* handler_ {nullptr};
 };

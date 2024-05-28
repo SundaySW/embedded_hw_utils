@@ -1,13 +1,14 @@
 #pragma once
 
-#include "uart_fwd.hpp"
+#include "embedded_hw_utils/connectivity/impl/interface_task.hpp"
+#include "embedded_hw_utils/connectivity/uart/uart_driver_settings.hpp"
 //#include "embedded_hw_utils/meta/meta_utils.hpp"
 
 namespace connectivity::uart{
 
 using TaskT = Task<uart_buffer_size>;
 
-struct UartTask: TaskT{
+struct UartTask final: TaskT{
 
     template<typename ... Types>
     UartTask(Types&&... args)

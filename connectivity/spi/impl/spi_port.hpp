@@ -1,7 +1,7 @@
 #pragma once
 
 #include "spi_task.hpp"
-#include "spi_fwd.hpp"
+#include "embedded_hw_utils/connectivity/impl/interface_port.hpp"
 
 namespace connectivity::spi{
 
@@ -13,17 +13,17 @@ struct SpiPort final: InterfacePort<SpiHandleT, SpiTask, spi_queue_size>{
     void ErrorHandler(){}
 
     protected:
-        void TaskPreprocedure() override final{
+        void TaskPreProcedure() override final{
             current_task_.ChipSelect();
             switch (current_task_.Type()){
-                case utils::transmit_receive:
+                case connectivity::transmit_receive:
                     HAL_SPI_Transmit_DMA(handle_, current_task_.TxData(), current_task_.TxSize());
                     HAL_SPI_Receive_DMA(handle_, current_task_.RxData(), current_task_.RxSize());
                     break;
-                case utils::transmit:
+                case connectivity::transmit:
                     HAL_SPI_Transmit_DMA(handle_, current_task_.TxData(), current_task_.TxSize());
                     break;
-                case utils::receive:
+                case connectivity::receive:
                     HAL_SPI_Receive_DMA(handle_, current_task_.RxData(), current_task_.RxSize());
                     break;
             }

@@ -97,6 +97,17 @@ namespace StepperMotor{
             uSec_accel_ = 0;
         }
 
+        void ChangeDirectionAndRange(uint32_t steps){
+            SetDirection_(static_cast<bool>(currentDirection_) ? Direction::BACKWARDS : Direction::FORWARD);
+            V_ = Vmin_;
+            mode_ = Mode::ACCEL;
+            CalcRegValue_();
+            task_step_ = 0;
+            accel_step_ = 0;
+            uSec_accel_ = 0;
+            steps_to_go_ = steps;
+        }
+
         [[nodiscard]] bool IsMotorMoving() const {
             return motorMoving_;
         }

@@ -6,7 +6,7 @@
 
 namespace connectivity{
 
-template<typename Port_t, std::size_t I_size>
+template<typename Port_t, std::size_t pool_size>
 struct InterfaceDriver{
     void ProcessTasks(){
         for(auto& port: ports_)
@@ -28,8 +28,9 @@ struct InterfaceDriver{
         if(auto it = std::ranges::find(ports_, nullptr, &Port_t::GetHandle); it != ports_.end())
             it->SetHandle(handle);
     }
+
     void TxHandler(typename Port_t::Hadle_t handle){
-        for(std::size_t i = 0; i < I_size; i++){
+        for(std::size_t i = 0; i < pool_size; i++){
             auto& port = ports_[i];
             if(port.GetHandle() == handle){
                 port.TxHandler();
@@ -37,17 +38,19 @@ struct InterfaceDriver{
             }
         }
     }
+
     void RxHandler(typename Port_t::Hadle_t handle){
         if(auto it = std::ranges::find(ports_, handle, &Port_t::GetHandle); it != ports_.end())
             it->RxHandler();
     }
+
     void ErrorHandler(typename Port_t::Hadle_t handle){
         if(auto it = std::ranges::find(ports_, handle, &Port_t::GetHandle); it != ports_.end())
             it->ErrorHandler();
     }
 
 protected:
-    std::array<Port_t, I_size> ports_;
+    std::array<Port_t, pool_size> ports_;
 };
 
 } //namespace connectivity

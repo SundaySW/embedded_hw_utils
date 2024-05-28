@@ -1,11 +1,7 @@
 #pragma once
 
-#include <cstring>
 #include <array>
-#include <functional>
-#include <cstdint>
 #include <optional>
-#include <span>
 
 #include "embedded_hw_utils/utils/task_callback.hpp"
 #include "embedded_hw_utils/utils/tx_data_pair.hpp"
@@ -38,6 +34,7 @@ namespace connectivity{
         [[nodiscard]] std::size_t RxSize() const { return rx_size_; }
 
         Task() = default;
+
         Task(utils::TxData data)
             :tx_size_(data.size)
             ,type_(transmit)

@@ -7,9 +7,10 @@
 #include "interface_task.hpp"
 
 namespace connectivity{
-    template<typename Handle_type, typename Task_t, std::size_t Q_size>
+
+    template<typename InterfaceHandle_type, typename Task_t, std::size_t queue_size>
     struct InterfacePort{
-        using Hadle_t = Handle_type;
+        using Hadle_t = InterfaceHandle_type;
 //        explicit InterfacePort(Handler_t handler)
 //        {
 //            handler_ = handler;
@@ -51,7 +52,7 @@ namespace connectivity{
                 in_process_ = true;
                 current_task_ = tasks_.front();
                 tasks_.pop();
-                TaskPreprocedure();
+                TaskPreProcedure();
             }
         }
 
@@ -67,10 +68,10 @@ namespace connectivity{
     protected:
         bool in_process_ {false};
         Task_t current_task_;
-        utils::Queue<Task_t, Q_size> tasks_;
+        utils::Queue<Task_t, queue_size> tasks_;
         static inline Hadle_t handle_ {nullptr};
 
-        virtual void TaskPreprocedure() = 0;
+        virtual void TaskPreProcedure() = 0;
         virtual void TaskPostProcedure() = 0;
     };
 

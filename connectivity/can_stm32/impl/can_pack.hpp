@@ -7,7 +7,7 @@
 
 struct CANPack
 {
-    enum {
+    enum{
         kdata_size = 8
     };
 

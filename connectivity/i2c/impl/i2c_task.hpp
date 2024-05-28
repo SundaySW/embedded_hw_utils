@@ -1,12 +1,13 @@
 #pragma once
 
-#include "i2c_fwd.hpp"
+#include "embedded_hw_utils/connectivity/i2c/i2c_driver_settings.hpp"
+//#include "embedded_hw_utils/meta/meta_utils.hpp"
 
 namespace connectivity::i2c{
 
 using TaskT = Task<i2c_buffer_size>;
 
-struct I2CTask: TaskT{
+struct I2CTask final: TaskT{
     template<typename ... Types>
     I2CTask(Types&&... args)
         :TaskT(std::forward<decltype(args)>(args)...)

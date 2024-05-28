@@ -6,7 +6,7 @@
 
 namespace utils{
 
-template<typename T, std::size_t Size>
+template<typename T, std::size_t size>
 class Queue{
 public:
     Queue()=default;
@@ -31,7 +31,7 @@ public:
     }
 
     bool full(){
-        return elems_ == Size;
+        return elems_ == size;
     }
 
     bool empty(){
@@ -46,15 +46,15 @@ private:
     std::size_t head_{0};
     std::size_t tail_{0};
     std::size_t elems_{0};
-    std::array<T, Size> storage_;
+    std::array<T, size> storage_;
 
     std::size_t SetTailIdx(){
-        if(++tail_ == Size)
+        if(++tail_ == size)
             tail_ = 0;
         return tail_;
     }
     std::size_t SetHeadIdx(){
-        if(++head_ == Size)
+        if(++head_ == size)
             head_ = 0;
         return head_;
     }

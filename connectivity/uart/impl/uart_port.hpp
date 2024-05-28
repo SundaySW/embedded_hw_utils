@@ -1,7 +1,7 @@
 #pragma once
 
 #include "uart_task.hpp"
-#include "uart_fwd.hpp"
+#include "embedded_hw_utils/connectivity/impl/interface_port.hpp"
 
 namespace connectivity::uart{
 
@@ -10,7 +10,7 @@ struct UartPort final: InterfacePort<UartHandleT, UartTask, uart_queue_size>{
 void ErrorHandler(){}
 
 protected:
-    void TaskPreprocedure() override final{
+    void TaskPreProcedure() override final{
         switch (current_task_.Type()){
             case connectivity::transmit_receive:
                 HAL_UART_Transmit_DMA(handle_, current_task_.TxData(), current_task_.TxSize());

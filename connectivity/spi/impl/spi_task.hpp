@@ -1,9 +1,11 @@
 #pragma once
 
-#include "embedded_hw_utils/IO/pin.hpp"
-#include "embedded_hw_utils/meta/meta_utils.hpp"
+#include "embedded_hw_utils/connectivity/spi/spi_driver_settings.hpp"
 
-#include "spi_fwd.hpp"
+#include "embedded_hw_utils/IO/pin.hpp"
+#include "embedded_hw_utils/connectivity/impl/interface_task.hpp"
+
+//#include "embedded_hw_utils/meta/meta_utils.hpp"
 
 namespace connectivity::spi{
 
@@ -11,7 +13,7 @@ using TaskT = Task<spi_buffer_size>;
 
 using PinT = pin_board::PIN<pin_board::Writeable>*;
 
-struct SpiTask: TaskT{
+struct SpiTask final: TaskT{
 
     void ChipRelease(){
         if(pin_)
