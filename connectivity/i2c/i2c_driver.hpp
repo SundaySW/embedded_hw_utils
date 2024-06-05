@@ -3,11 +3,11 @@
 #include "embedded_hw_utils/connectivity/i2c/impl/i2c_port.hpp"
 
 #define I2C_PLACE_TASK(handle, args...)  \
-                        connectivity::i2c::I2CDriver::global().GetPort(handle)->PlaceTask(args)
+                connectivity::i2c::I2CDriver::global().GetPort(handle)->PlaceTask(args)
 #define I2C_PLACE_TASK_CB(handle, lambda, args...)  \
-                        connectivity::i2c::I2CDriver::global().GetPort(handle)->PlaceTask(args, task::CB(this, lambda))
+                connectivity::i2c::I2CDriver::global().GetPort(handle)->PlaceTask(args, connectivity::CB(this, lambda))
 #define I2C_PLACE_TASK_PTR(handle, ptr, lambda, args...)  \
-                        connectivity::i2c::I2CDriver::global().GetPort(handle)->PlaceTask(args, task::CB(ptr, lambda))
+                connectivity::i2c::I2CDriver::global().GetPort(handle)->PlaceTask(args, connectivity::CB(ptr, lambda))
 
 #define I2C_driver_place_port_(port) connectivity::i2c::I2CDriver::global().PlacePort(port)
 #define I2C_driver_(handle) I2CDriver::global().GetPort(handle)

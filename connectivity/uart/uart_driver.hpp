@@ -5,10 +5,16 @@
 
 #define UART_PLACE_TASK(handle, args...)  \
             connectivity::uart::Uart_Driver::global().GetPort(handle)->PlaceTask(args)
-#define UART_PLACE_TASK_CB(handle, lambda, args...)  \
-            connectivity::uart::Uart_Driver::global().GetPort(handle)->PlaceTask(args, connectivity::CB(this, lambda))
-#define UART_PLACE_TASK_PTR(handle, ptr, lambda, args...)  \
-            connectivity::uart::Uart_Driver::global().GetPort(handle)->PlaceTask(args, connectivity::CB(ptr, lambda))
+#define UART_PLACE_TASK_CB(handle, expr, args...)  \
+            connectivity::uart::Uart_Driver::global().GetPort(handle)->PlaceTask(args, connectivity::CB(this, [](void* context, uint8_t* data){ \
+            auto self = static_cast<decltype(this)>(context);                                               \
+            expr;                                                                                           \
+        }))
+#define UART_PLACE_TASK_PTR(handle, ptr, expr, args...)  \
+        connectivity::uart::Uart_Driver::global().GetPort(handle)->PlaceTask(args, connectivity::CB(ptr, [](void* context, uint8_t* data){ \
+            auto context_ptr = static_cast<decltype(this)>(context);                                               \
+            expr;                                                                                           \
+        }))
 
 #define UART_driver_place_port_(port) connectivity::uart::Uart_Driver::global().PlacePort(port)
 #define UART_driver_(handle) connectivity::uart::Uart_Driver::global().GetPort(handle)

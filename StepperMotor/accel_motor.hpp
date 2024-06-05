@@ -9,10 +9,10 @@ namespace MotorSpecial {
     using namespace StepperMotor;
 
     enum AccelType{
-        kLinear,
-        kConstantPower,
-        kParabolic,
-        kSigmoid
+        kLinear = 0,
+        kConstantPower = 1,
+        kParabolic = 2,
+        kSigmoid = 3
     };
 
     struct AccelCfg

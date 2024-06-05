@@ -2,6 +2,7 @@
 
 #include <array>
 #include <optional>
+#include <cstring>
 
 #include "embedded_hw_utils/utils/task_callback.hpp"
 #include "embedded_hw_utils/utils/tx_data_pair.hpp"
@@ -43,7 +44,7 @@ namespace connectivity{
         }
 
         Task(utils::TxData data, CB call_back)
-            :call_back_(std::move(call_back))
+            :call_back_(call_back)
             ,tx_size_(data.size)
             ,type_(transmit)
         {
@@ -51,7 +52,7 @@ namespace connectivity{
         }
 
         Task(std::size_t rx_size, CB call_back)
-            :call_back_(std::move(call_back))
+            :call_back_(call_back)
             ,rx_size_(rx_size)
             ,type_(receive)
         {}
@@ -62,7 +63,7 @@ namespace connectivity{
         {}
 
         Task(utils::TxData data, std::size_t rx_size, CB call_back)
-            :call_back_(std::move(call_back))
+            :call_back_(call_back)
             ,rx_size_(rx_size)
             ,tx_size_(data.size)
             ,type_(transmit_receive)

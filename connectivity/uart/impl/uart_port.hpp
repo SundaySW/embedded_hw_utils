@@ -7,7 +7,9 @@ namespace connectivity::uart{
 
 struct UartPort final: InterfacePort<UartHandleT, UartTask, uart_queue_size>{
 
-void ErrorHandler(){}
+    void ErrorHandler(){
+        assert(false);
+    }
 
 protected:
     void TaskPreProcedure() override final{
@@ -25,7 +27,9 @@ protected:
         }
     }
 
-    void TaskPostProcedure() override final{}
+    void TaskPostProcedure() override final{
+
+    }
 };
 
 } //namespace connectivity

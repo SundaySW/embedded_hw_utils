@@ -79,7 +79,7 @@ namespace StepperMotor{
         void StopMotor(){
             if(motorMoving_){
                 HAL_TIM_PWM_Stop_IT(htim_, timChannel_);
-//                enable_pin_.setValue(HIGH);
+//                enable_pin_.setValue(pin_board::HIGH);
                 step_pin_.setValue(pin_board::LOW);
                 motorMoving_ = false;
                 mode_ = Mode::IDLE;
@@ -97,15 +97,15 @@ namespace StepperMotor{
             uSec_accel_ = 0;
         }
 
-        void ChangeDirectionAndRange(uint32_t steps){
-            SetDirection_(static_cast<bool>(currentDirection_) ? Direction::BACKWARDS : Direction::FORWARD);
+        void ChangeDirectionAndGo(uint32_t steps){
+            SetDirection_(currentDirection_ == Motor::Direction::FORWARD ? Direction::BACKWARDS : Direction::FORWARD);
+            steps_to_go_ = steps;
             V_ = Vmin_;
-            mode_ = Mode::ACCEL;
             CalcRegValue_();
             task_step_ = 0;
             accel_step_ = 0;
             uSec_accel_ = 0;
-            steps_to_go_ = steps;
+            mode_ = Mode::ACCEL;
         }
 
         [[nodiscard]] bool IsMotorMoving() const {
@@ -142,7 +142,7 @@ namespace StepperMotor{
         MOTOR_IOS direction_pin_;
         MOTOR_IOS enable_pin_;
 
-        TIM_HandleTypeDef *htim_;
+        TIM_HandleTypeDef* htim_;
         uint32_t timChannel_;
         uint32_t timer_tick_Hz_;
 

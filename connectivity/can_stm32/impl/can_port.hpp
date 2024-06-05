@@ -7,11 +7,12 @@
 #include "can_pack.hpp"
 #include "embedded_hw_utils/utils/queue.hpp"
 
-struct CANPort
+namespace connectivity::can{
+struct Port
 {
 	enum { RXQ_SIZE = 16, TXQ_SIZE = 32};
 
-	CANPort(){
+	Port(){
 		header_.Identifier = 0x000;
         header_.IdType = FDCAN_EXTENDED_ID;
         header_.TxFrameType = FDCAN_DATA_FRAME;
@@ -27,11 +28,11 @@ struct CANPort
         handler_ = handler;
     }
 
-	std::optional<CANPack> Read()
+	std::optional<Pack> Read()
 	{
 		if(rx_queue_.empty())
             return {};
-        std::optional<CANPack> val = rx_queue_.front();
+        std::optional<Pack> val = rx_queue_.front();
         rx_queue_.pop();
         return val;
 	}
@@ -53,21 +54,22 @@ struct CANPort
 	}
 
 	bool OnRX(FDCAN_RxHeaderTypeDef header,  uint8_t* const data){
-		return rx_queue_.push(CANPack{header.Identifier, static_cast<uint8_t>(header.DataLength >> 16), data});
+		return rx_queue_.push(Pack{header.Identifier, static_cast<uint8_t>(header.DataLength >> 16), data});
 	}
 
 	void Send(uint32_t id, uint8_t dlc,  uint8_t* const data){
-        tx_queue_.push(CANPack{id, dlc, data});
+        tx_queue_.push(Pack{id, dlc, data});
 	}
-    void Send(CANPack& pack){
+    void Send(Pack& pack){
         tx_queue_.push(pack);
     }
-    void Send(CANPack&& pack){
-        tx_queue_.push(std::forward<CANPack>(pack));
+    void Send(Pack&& pack){
+        tx_queue_.push(std::forward<Pack>(pack));
     }
 private:
 	FDCAN_TxHeaderTypeDef header_;
     FDCAN_HandleTypeDef* handler_ {nullptr};
-    utils::Queue<CANPack, RXQ_SIZE> rx_queue_;
-    utils::Queue<CANPack, TXQ_SIZE> tx_queue_;
+    utils::Queue<Pack, RXQ_SIZE> rx_queue_;
+    utils::Queue<Pack, TXQ_SIZE> tx_queue_;
 };
+}
