@@ -16,7 +16,7 @@ namespace connectivity{
         transmit_receive
     };
 
-    template<std::size_t buffer_size = 8>
+    template<std::size_t buffer_size = 8, typename CB = CB>
     struct Task{
         void PlaceData(utils::TxData data){
             if(data.size <= sizeof tx_data_)
@@ -27,7 +27,7 @@ namespace connectivity{
             if(call_back_)
                 call_back_.value()(rx_data_.data());
         }
-
+        auto& TxStorage(){ return tx_data_; }
         uint8_t* TxData(){ return tx_data_.data(); }
         uint8_t* RxData(){ return rx_data_.data(); }
         TaskType Type(){ return type_; }
@@ -70,13 +70,13 @@ namespace connectivity{
         {
             PlaceData(data);
         }
-
-    private:
-        TaskType type_;
+    protected:
         std::array<uint8_t, buffer_size> rx_data_{0,};
         std::array<uint8_t, buffer_size> tx_data_{0,};
         std::size_t rx_size_;
         std::size_t tx_size_;
+    private:
+        TaskType type_;
         std::optional<CB> call_back_;
     };
-}
+} //namespace connectivity

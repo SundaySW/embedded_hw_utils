@@ -5,11 +5,13 @@
 
 #define UART_PLACE_TASK(handle, args...)  \
             connectivity::uart::Uart_Driver::global().GetPort(handle)->PlaceTask(args)
+
 #define UART_PLACE_TASK_CB(handle, expr, args...)  \
             connectivity::uart::Uart_Driver::global().GetPort(handle)->PlaceTask(args, connectivity::CB(this, [](void* context, uint8_t* data){ \
             auto self = static_cast<decltype(this)>(context);                                               \
             expr;                                                                                           \
         }))
+
 #define UART_PLACE_TASK_PTR(handle, ptr, expr, args...)  \
         connectivity::uart::Uart_Driver::global().GetPort(handle)->PlaceTask(args, connectivity::CB(ptr, [](void* context, uint8_t* data){ \
             auto context_ptr = static_cast<decltype(this)>(context);                                               \
@@ -27,15 +29,9 @@ struct Uart_Driver final: InterfaceDriver<UartPort, uart_interface_cnt>{
         static auto instance = Uart_Driver();
         return instance;
     }
-
-    template<typename ...Types>
-    void PlaceTask(UartHandleT handle, Types&& ...args){
-        if(auto it = std::ranges::find(ports_, handle, &UartPort::GetHandle); it != ports_.end())
-            it->PlaceTask(std::forward<Types>(args)...);
-    }
 };
 
-}//namespace connectivity
+}//namespace connectivity::uart
 
 extern "C"
 {

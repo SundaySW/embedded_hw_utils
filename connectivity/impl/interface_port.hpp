@@ -8,8 +8,9 @@
 
 namespace connectivity{
 
-    template<typename InterfaceHandle_type, typename Task_t, std::size_t queue_size>
+    template<typename InterfaceHandle_type, typename TaskT, std::size_t queue_size>
     struct InterfacePort{
+        using Task_t = TaskT;
         using Hadle_t = InterfaceHandle_type;
 //        explicit InterfacePort(Handler_t handler)
 //        {
@@ -59,6 +60,10 @@ namespace connectivity{
         template<typename ...Args>
         void PlaceTask(Args&& ...arg){
             tasks_.push(Task_t(std::forward<Args>(arg)...));
+        }
+
+        void PlaceTask(Task_t&& task){
+            tasks_.push(std::forward<Task_t>(task));
         }
 
         auto operator()(){

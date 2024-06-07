@@ -12,9 +12,23 @@ struct InterfaceDriver{
         for(auto& port: ports_)
             port.ProcessTask();
     }
+
     InterfaceDriver(){
         PLACE_ASYNC_QUICKEST({ self->ProcessTasks();});
     }
+
+    template<typename ...Types>
+    void PlaceTask(typename Port_t::Hadle_t handle, Types&& ...args){
+        if(auto it = std::ranges::find(ports_, handle, &Port_t::Hadle_t::GetHandle); it != ports_.end())
+            it->PlaceTask(std::forward<Types>(args)...);
+    }
+
+    template<typename ...Types>
+    void PlaceTask(typename Port_t::Hadle_t handle, typename Port_t::Task_t&& task){
+        if(auto it = std::ranges::find(ports_, handle, &Port_t::Hadle_t::GetHandle); it != ports_.end())
+            it->PlaceTask(std::forward<Port_t::Task_t>(task));
+    }
+
     auto GetPort(typename Port_t::Hadle_t handle){
         if(auto it = std::ranges::find(ports_, handle, &Port_t::GetHandle); it != ports_.end())
             return it;

@@ -17,18 +17,12 @@
                 connectivity::spi::SPI_Driver::global().GetPort(handle)->ClearQueue()
 namespace connectivity::spi{
 
-    struct SPI_Driver final: InterfaceDriver<SpiPort, spi_interface_cnt>{
-        static SPI_Driver& global(){
-            static auto instance = SPI_Driver();
-            return instance;
-        }
-
-        template<typename ...Types>
-        void PlaceTask(SpiHandleT handle, Types&& ...args){
-            if(auto it = std::ranges::find(ports_, handle, &SpiPort::GetHandle); it != ports_.end())
-                it->PlaceTask(std::forward<Types>(args)...);
-        }
-    };
+struct SPI_Driver final: InterfaceDriver<SpiPort, spi_interface_cnt>{
+    static SPI_Driver& global(){
+        static auto instance = SPI_Driver();
+        return instance;
+    }
+};
 
 }//namespace connectivity
 
