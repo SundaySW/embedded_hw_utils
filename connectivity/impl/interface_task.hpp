@@ -16,6 +16,12 @@ namespace connectivity{
         transmit_receive
     };
 
+    enum class TaskState{
+        free,
+        in_process,
+        pending
+    };
+
     template<std::size_t buffer_size = 8, typename CB = CB>
     struct Task{
         void PlaceData(utils::TxData data){
@@ -33,6 +39,10 @@ namespace connectivity{
         TaskType Type(){ return type_; }
         [[nodiscard]] std::size_t TxSize() const { return tx_size_; }
         [[nodiscard]] std::size_t RxSize() const { return rx_size_; }
+        void setState(TaskState state){ state_ = state; }
+        auto isFree(){ return state_ == TaskState::free; }
+        auto isInProcess(){ return state_ == TaskState::in_process; }
+        auto isPending(){ return state_ == TaskState::pending; }
 
         Task() = default;
 
@@ -77,6 +87,7 @@ namespace connectivity{
         std::size_t tx_size_;
     private:
         TaskType type_;
+        TaskState state_{TaskState::free};
         std::optional<CB> call_back_;
     };
 } //namespace connectivity

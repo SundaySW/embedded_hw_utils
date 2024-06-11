@@ -29,12 +29,19 @@ struct Uart_Driver final: InterfaceDriver<UartPort, uart_interface_cnt>{
         static auto instance = Uart_Driver();
         return instance;
     }
+    void RxHandlerSize(UartHandleT handle, uint16_t size){
+        if(auto it = std::ranges::find(ports_, handle, &UartPort::GetHandle); it != ports_.end())
+            it->RxHandlerSize(size);
+    }
 };
 
 }//namespace connectivity::uart
 
 extern "C"
 {
+    void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t size) {
+        connectivity::uart::Uart_Driver::global().RxHandlerSize(huart, size);
+    }
     void HAL_UART_TxCpltCallback(UART_HandleTypeDef* huart) {
         connectivity::uart::Uart_Driver::global().TxHandler(huart);
     }

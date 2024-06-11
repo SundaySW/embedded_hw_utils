@@ -6,11 +6,10 @@
 #include <cstring>
 
 namespace connectivity::can {
-struct Pack {
-    enum {
-        kPack_size = 8
-    };
 
+constexpr std::size_t kPack_size {8};
+
+struct Pack {
     Pack() = default;
 
     Pack(uint32_t id_, uint8_t dlc_, uint8_t *const data_)

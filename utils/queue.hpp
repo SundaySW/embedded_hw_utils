@@ -21,6 +21,20 @@ public:
         return true;
     }
 
+    bool push(){
+        if(full())
+            return false;
+        if(empty())
+            return true;
+        elems_++;
+        SetTailIdx();
+        return true;
+    }
+
+    T& tail(){
+        return storage_[tail_];
+    }
+
     void pop(){
         elems_--;
         SetHeadIdx();

@@ -12,10 +12,6 @@ namespace connectivity{
     struct InterfacePort{
         using Task_t = TaskT;
         using Hadle_t = InterfaceHandle_type;
-//        explicit InterfacePort(Handler_t handler)
-//        {
-//            handler_ = handler;
-//        }
 
         void SetHandle(Hadle_t spiHandle){
             handle_ = spiHandle;
@@ -37,20 +33,22 @@ namespace connectivity{
 
         void ClearQueue(){
             tasks_.clear();
-            in_process_ = false;
+            current_task_.setState(TaskState::in_process);
         }
 
         void FinishTask(){
-            if(in_process_){
-                current_task_.CallBack();
-                TaskPostProcedure();
-                in_process_ = false;
-            }
+            if(current_task_.isInProcess())
+                current_task_.setState(TaskState::pending);
         }
 
         void ProcessTask(){
-            if(!tasks_.empty() && !in_process_){
-                in_process_ = true;
+            if(current_task_.isPending())
+            {
+                current_task_.CallBack();
+                TaskPostProcedure();
+            }
+            else if(!tasks_.empty() && current_task_.isFree()){
+                current_task_.setState(TaskState::in_process);
                 current_task_ = tasks_.front();
                 tasks_.pop();
                 TaskPreProcedure();
@@ -71,7 +69,6 @@ namespace connectivity{
         }
 
     protected:
-        bool in_process_ {false};
         Task_t current_task_;
         utils::Queue<Task_t, queue_size> tasks_;
         static inline Hadle_t handle_ {nullptr};
