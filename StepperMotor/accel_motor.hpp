@@ -25,8 +25,31 @@ namespace MotorSpecial {
         StepperCfg stepperCfg;
     };
 
-    struct AccelMotor: StepperMotorBase {
+    struct Sigmoid{
+        float k1{1};
+        float k2{1};
+        const uint8_t k3{2};       //move sigmoid center (k3=2) from y_axis (0<k3<2) to y_axis (2<k3<8)
 
+        float y_offset{1};
+        int x_offset{1};
+
+        float core_f(int x) const {
+            return x / (k2 + std::abs(x));
+        }
+        void KCalc(uint32_t tTotal, float Vmax, float Vmin) {
+            x_offset = tTotal / k3;
+            k2 = x_offset * (1 / (1 - (Vmin / (Vmax / 2))) - 1);
+            k1 = 1 / (core_f(tTotal - x_offset) + 1);
+            k2 = x_offset * (1 / (1 - (Vmin / (Vmax * k1))) - 1);
+            k1 = 1 / (core_f(tTotal - x_offset) + 1);
+            y_offset = k1 * Vmax;
+        }
+        uint32_t VCalc(uint32_t uSec) {
+            return y_offset * core_f(uSec - x_offset) + y_offset;
+        }
+    };
+
+    struct AccelMotor: StepperMotorBase {
         explicit AccelMotor(AccelCfg& cfg)
             :StepperMotorBase(cfg.stepperCfg)
         {
@@ -54,35 +77,10 @@ namespace MotorSpecial {
         uint32_t config_Vmin_{1};
     private:
         uint32_t A_{1};
-        AccelType accel_type_ = kParabolic;
-
-        struct {
-            float k1{1};
-            float k2{1};
-            float y_offset{1};
-            int x_offset{1};
-            const uint8_t k3{2};       //move sigmoid center (k3=2) from y_axis (0<k3<2) to y_axis (2<k3<8)
-
-            float core_f(int x) const {
-                return x / (k2 + std::abs(x));
-            }
-
-            void KCalc(uint32_t tTotal, float Vmax, float Vmin) {
-                x_offset = tTotal / k3;
-                k2 = x_offset * (1 / (1 - (Vmin / (Vmax / 2))) - 1);
-                k1 = 1 / (core_f(tTotal - x_offset) + 1);
-                k2 = x_offset * (1 / (1 - (Vmin / (Vmax * k1))) - 1);
-                k1 = 1 / (core_f(tTotal - x_offset) + 1);
-                y_offset = k1 * Vmax;
-            }
-
-            uint32_t VCalc(uint32_t uSec) {
-                return y_offset * core_f(uSec - x_offset) + y_offset;
-            }
-        } sigmoid_;
-
-
         float k_{1};
+        AccelType accel_type_ = kParabolic;
+        Sigmoid sigmoid_;
+
         void ReCalcKFactors() {
             switch (accel_type_) {
                 case kLinear:
@@ -113,7 +111,7 @@ namespace MotorSpecial {
             }
         }
 
-        void AccelerationImpl() {
+        void AccelerationImpl() final{
             switch (accel_type_) {
                 case kLinear:
                     V_ = static_cast<uint32_t>(k_ * uSec_accel_) + Vmin_;

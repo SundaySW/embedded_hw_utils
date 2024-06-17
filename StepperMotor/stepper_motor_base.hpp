@@ -108,22 +108,18 @@ namespace StepperMotor{
             mode_ = Mode::ACCEL;
         }
 
-        [[nodiscard]] bool IsMotorMoving() const {
-            return motorMoving_;
+        [[nodiscard]] bool IsMotorMoving() const {return motorMoving_;}
+        [[nodiscard]] Mode GetMode() const {return mode_;}
+        [[nodiscard]] MOTOR_EVENT GetEvent() const {return event_;}
+        [[nodiscard]] Direction GetCurrentDirection() const {return currentDirection_;}
+        void AddStepsToTask(int steps) {
+            mode_ = Mode::ACCEL;
+            steps_to_go_ += steps;
         }
-
-        [[nodiscard]] Mode GetMode() const {
-            return mode_;
-        }
-
-        [[nodiscard]] MOTOR_EVENT GetEvent() const {
-            return event_;
-        }
-
-        [[nodiscard]] Direction GetCurrentDirection() const {
-            return currentDirection_;
-        }
-
+        void SetStepsToGo(int steps) { steps_to_go_ = steps; }
+        auto StepsToGo() const { return steps_to_go_; }
+    private:
+        int steps_to_go_ {0};
     protected:
         StepperMotorBase() = delete;
         explicit StepperMotorBase(StepperMotor::StepperCfg& cfg)
@@ -147,7 +143,7 @@ namespace StepperMotor{
         uint32_t timer_tick_Hz_;
 
         inline static uint32_t kCriticalNofSteps_ {0};
-        int steps_to_go_ {0};
+
         int task_step_ {0};
         int accel_step_ {0};
 

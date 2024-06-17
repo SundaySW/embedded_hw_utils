@@ -46,10 +46,11 @@ namespace connectivity{
             {
                 current_task_.CallBack();
                 TaskPostProcedure();
+                current_task_.setState(TaskState::free);
             }
             else if(!tasks_.empty() && current_task_.isFree()){
-                current_task_.setState(TaskState::in_process);
                 current_task_ = tasks_.front();
+                current_task_.setState(TaskState::in_process);
                 tasks_.pop();
                 TaskPreProcedure();
             }

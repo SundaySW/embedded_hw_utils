@@ -21,7 +21,7 @@ struct UartPort final: InterfacePort<UartHandleT, UartTask, uart_queue_size>{
         rx_pack_.setReady(size);
     }
 
-    bool PopPack(Pack& pack){
+    bool GetPack(Pack& pack){
         if(!rx_pack_.isReady())
             return false;
         pack = rx_pack_;
