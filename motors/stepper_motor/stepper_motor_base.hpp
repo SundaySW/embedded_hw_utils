@@ -65,7 +65,7 @@ namespace StepperMotor{
         void MakeMotorTask(uint32_t start_speed,
                            uint32_t max_speed,
                            Direction dir = currentDirection_,
-                           uint32_t steps = kCriticalNofSteps_)
+                           int steps = kCriticalNofSteps_)
         {
             if(motorMoving_)
                 StopMotor();
@@ -97,7 +97,7 @@ namespace StepperMotor{
             uSec_accel_ = 0;
         }
 
-        void ChangeDirectionAndGo(uint32_t steps){
+        void ChangeDirectionAndGo(int steps = INT32_MAX){
             SetDirection_(currentDirection_ == Motor::Direction::FORWARD ? Direction::BACKWARDS : Direction::FORWARD);
             steps_to_go_ = steps;
             V_ = Vmin_;
@@ -116,7 +116,10 @@ namespace StepperMotor{
             mode_ = Mode::ACCEL;
             steps_to_go_ += steps;
         }
-        void SetStepsToGo(int steps) { steps_to_go_ = steps; }
+        void SetStepsToGo(int steps) {
+            steps_to_go_ = steps;
+            mode_ = Mode::ACCEL;
+        }
         auto StepsToGo() const { return steps_to_go_; }
     private:
         int steps_to_go_ {0};
@@ -160,7 +163,7 @@ namespace StepperMotor{
         bool directionInverted_ {false};
         bool motorMoving_ {false};
 
-        void StartMotor_(uint32_t steps){
+        void StartMotor_(int steps){
             if(!motorMoving_){
                 accel_step_ = 0;
                 uSec_accel_ = 0;
@@ -245,4 +248,4 @@ namespace StepperMotor{
         }
     };
 
-} //namespace StepperMotor
+} //namespace stepper_motor

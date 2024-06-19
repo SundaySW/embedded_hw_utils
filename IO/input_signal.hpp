@@ -4,30 +4,28 @@
 
 struct InputSignal{
     enum PinConnectionState{
+        on,
         connected,
-        new_connection,
-        last_disconnected,
-        no_device
+        disconnected,
+        off
     };
 
-    explicit InputSignal(pin_board::PIN<pin_board::Switchable> pin, uint32_t debounce_time) noexcept
+    explicit InputSignal(pin_board::PIN<pin_board::Readable> pin, uint32_t debounce_time = 1) noexcept
         :pin_(pin)
         ,debounce_time_(debounce_time)
-    {}
-
-//    constexpr explicit InputSignal(pin_board::PIN<pin_board::Readable> pin, uint32_t debounce_time) noexcept
-//        : pin_(pin)
-//        , debounce_time_(debounce_time)
-//    {}
+    {
+        UpdatePin();
+        GetPinConnectionState();
+    }
 
     PinConnectionState GetPinConnectionState(){
-        auto retV = no_device;
+        auto retV = off;
         if(signal_state_ && last_pin_connection_state_)
-            retV = connected;
+            retV = on;
         else if(signal_state_ && !last_pin_connection_state_)
-            retV = new_connection;
+            retV = connected;
         else if(!signal_state_ && last_pin_connection_state_)
-            retV = last_disconnected;
+            retV = disconnected;
         last_pin_connection_state_ = signal_state_;
         return retV;
     }
@@ -57,7 +55,7 @@ struct InputSignal{
         return signal_state_;
     }
 private:
-    pin_board::PIN<pin_board::Switchable> pin_;
+    pin_board::PIN<pin_board::Readable> pin_;
     pin_board::logic_level signal_state_ {pin_board::LOW};
     uint32_t debounce_time_;
     uint32_t active_time_{0};
