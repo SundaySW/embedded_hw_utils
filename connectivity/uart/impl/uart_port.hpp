@@ -33,11 +33,11 @@ protected:
     void TaskPreProcedure() final{
         switch (current_task_.Type()){
             case connectivity::transmit_receive:
-                HAL_UART_Transmit_IT(handle_, current_task_.TxData(), current_task_.TxSize());
+                HAL_UART_Transmit_DMA(handle_, current_task_.TxData(), current_task_.TxSize());
                 HAL_UART_Receive_DMA(handle_, current_task_.RxData(), current_task_.RxSize());
                 break;
             case connectivity::transmit:
-                HAL_UART_Transmit_IT(handle_, current_task_.TxData(), current_task_.TxSize());
+                HAL_UART_Transmit_DMA(handle_, current_task_.TxData(), current_task_.TxSize());
                 break;
             case connectivity::receive:
                 HAL_UART_Receive_DMA(handle_, current_task_.RxData(), current_task_.RxSize());

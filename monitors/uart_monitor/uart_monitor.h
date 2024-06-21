@@ -56,16 +56,20 @@ private:
 
     template<typename T>
     void PlaceValue(T&& num)
-    requires std::is_arithmetic<T>::value
     {
-        PlaceNumToStorage(std::forward<T>(num));
+        auto ptr = std::bit_cast<char*>(tx_storage_.data()) + storage_cursor_;
+        auto bytes_written = std::sprintf(ptr, "%d", num);
+        if(bytes_written > 0)
+            storage_cursor_ += bytes_written;
     }
 
-    template<typename T>
-    void PlaceNumToStorage(T&& num)
-    requires std::is_arithmetic<T>::value
+    void PlaceValue(float& num)
     {
-        static constexpr float kPrecision = 0.001;
+//        auto ptr = std::bit_cast<char*>(tx_storage_.data()) + storage_cursor_;
+//        auto bytes_written = std::sprintf(ptr, "%.2f", num);
+//        if(bytes_written > 0)
+//            storage_cursor_ += bytes_written;
+        static constexpr float kPrecision = 0.1;
         int cursor = std::log10(num);
         int digit;
         while (num > kPrecision)
@@ -74,13 +78,32 @@ private:
             digit = std::floor(num / weight);
             num -= digit * weight;
             StoreByte('0' + digit);
-            if constexpr(std::is_floating_point<T>::value) {
-                if(cursor == 0)
-                    StoreByte('.');
-            }
+            if(cursor == 0)
+                StoreByte('.');
             cursor--;
         }
+        StoreByte('0');
     }
+
+//    template<typename T>
+//    void PlaceNumToStorage(T&& num)
+//    {
+//        static constexpr float kPrecision = 0.001;
+//        int cursor = std::log10(num);
+//        int digit;
+//        while (num > kPrecision)
+//        {
+//            auto weight = std::pow(10.0f, cursor);
+//            digit = std::floor(num / weight);
+//            num -= digit * weight;
+//            StoreByte('0' + digit);
+//            if constexpr(std::is_floating_point<T>::value) {
+//                if(cursor == 0)
+//                    StoreByte('.');
+//            }
+//            cursor--;
+//        }
+//    }
 
     void PlaceTermination(){
         StoreBytes(0xFF, 0xFF, 0xFF);
