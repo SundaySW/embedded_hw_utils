@@ -72,7 +72,7 @@ namespace connectivity{
     protected:
         Task_t current_task_;
         utils::Queue<Task_t, queue_size> tasks_;
-        static inline Hadle_t handle_ {nullptr};
+        Hadle_t handle_ {nullptr};
 
         virtual void TaskPreProcedure() = 0;
         virtual void TaskPostProcedure() = 0;
