@@ -8,8 +8,19 @@ namespace connectivity::uart{
 
 struct UartPort final: InterfacePort<UartHandleT, UartTask, uart_queue_size>{
 
-    static void ErrorHandler(){
+    void ErrorHandler(){
         assert(false);
+//        __HAL_UART_CLEAR_IT(handle_, UART_CLEAR_FEF);
+//        __HAL_UART_CLEAR_IT(handle_, UART_CLEAR_NEF);
+//        __HAL_UART_CLEAR_IT(handle_, UART_CLEAR_OREF);
+//        __HAL_UART_CLEAR_IT(handle_, UART_CLEAR_RTOF);
+//        __HAL_UART_CLEAR_IDLEFLAG(handle_);
+//        __HAL_UART_CLEAR_OREFLAG(handle_);
+//        __HAL_UART_CLEAR_FEFLAG(handle_);
+
+//        __HAL_UART_RESET_HANDLE_STATE(handle_);
+//        auto error = HAL_UART_GetError(handle_);
+//        HAL_UART_Init(handle_);
     }
 
     void StartReading(){

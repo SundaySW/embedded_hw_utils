@@ -10,17 +10,17 @@
 struct EEPROM{
     struct Specs{
         using T = uint32_t;
-        static constexpr T ow_data_size_             {320}; //OneWire::ParamTable::MAX_ROWS_COUNT * OneWire::ParamTable::ROW_SIZE
-        static constexpr T board_data_start_addr_    {ow_data_size_};
-        static constexpr T eeprom_board_data_size_   {sizeof(uint8_t) * 8}; //UID(4byte) ADDR(1byte) + HWver(1byte) + SWver(1byte) + 1byte
-        static constexpr T eeprom_params_start_addr_ {board_data_start_addr_ + eeprom_board_data_size_};
-        static constexpr T param_n_of_calib_fields_  {2};
-        static constexpr T eeprom_calib_data_size_   {param_n_of_calib_fields_ * sizeof(float)};
+        static constexpr T ow_data_size_                {320}; //OneWire::ParamTable::MAX_ROWS_COUNT * OneWire::ParamTable::ROW_SIZE
+        static constexpr T board_data_start_addr_       {ow_data_size_};
+        static constexpr T eeprom_board_data_size_      {sizeof(uint8_t) * 8}; //UID(4byte) ADDR(1byte) + HWver(1byte) + SWver(1byte) + 1byte
+        static constexpr T eeprom_params_start_addr_    {board_data_start_addr_ + eeprom_board_data_size_};
+        static constexpr T param_n_of_calib_fields_     {2};
+        static constexpr T eeprom_calib_data_size_      {param_n_of_calib_fields_ * sizeof(float)};
 
-        static constexpr T first_page_addr   {ADDR_FLASH_PAGE_0};
-        static constexpr T start_addr_       {ADDR_FLASH_PAGE_63};
-        static constexpr T memory_size_bytes {2048};
-        static constexpr T base_offset_      {eeprom_params_start_addr_ + eeprom_calib_data_size_};
+        static constexpr T first_page_addr              {ADDR_FLASH_PAGE_0};
+        static constexpr T start_addr_                  {ADDR_FLASH_PAGE_63};
+        static constexpr T memory_size_bytes            {2048};
+        static constexpr T base_offset_                 {eeprom_params_start_addr_ + eeprom_calib_data_size_};
     };
 
     static uint32_t CalcOffset(uint32_t size){

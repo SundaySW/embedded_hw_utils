@@ -1,46 +1,65 @@
 #pragma once
 
+#include <ranges>
+
+#include "monitor_packet.hpp"
 #include "embedded_hw_utils/connectivity/uart/uart_driver.hpp"
 #include "async_tim_tasks/async_tim_tasks.hpp"
 
+template<typename Monitor>
 struct UartMonitor{
-    UartMonitor(UART_HandleTypeDef* uart_h)
+protected:
+    UartMonitor(UART_HandleTypeDef* uart_h, Monitor* monitor)
         :uart_handle_(uart_h)
+        ,monitor_(monitor)
     {
         Start();
     }
 
-protected:
-    connectivity::uart::Pack pack_;
+    template<typename ...Args>
+    void Send(Args&&... args){
+        PlaceToStorage(std::forward<Args>(args)...);
+        SendToUART();
+    }
 
-    virtual void HandleUartMsg() = 0;
+private:
+    Monitor* monitor_;
+    UART_HandleTypeDef* uart_handle_;
+    std::array<uint8_t, connectivity::uart::uart_buffer_size> tx_storage_;
+    connectivity::uart::Pack transmission_data_;
+    monitor::Packet assembled_packet_;
+    std::size_t storage_cursor_{0};
+
+    void HandleUartMsg(){
+        auto size = transmission_data_.getRxSize();
+        if(size == assembled_packet_.size())
+            assembled_packet_.Reset();
+
+        assembled_packet_.PlaceData(transmission_data_.data(), size);
+
+        if(assembled_packet_.isReady()){
+            auto payload_view = std::views::counted( assembled_packet_.data().begin() + monitor::Packet::kService_width,
+                                                     monitor::Packet::kPayload_size );
+            monitor_->ProcessPacket(payload_view);
+            assembled_packet_.Reset();
+        }
+    }
 
     template<typename ...Args>
     void PlaceToStorage(Args&&... args){
         (PlaceValue(std::forward<Args>(args)), ...);
     }
 
-    void SendToMonitor(){
+    void SendToUART(){
         PlaceTermination();
         UART_PLACE_TASK(uart_handle_, utils::TxData{tx_storage_.data(), storage_cursor_});
         storage_cursor_ = 0;
     }
 
-    template<typename ...Args>
-    void SendToMonitor(Args&&... args){
-        PlaceToStorage(std::forward<Args>(args)...);
-        SendToMonitor();
-    }
-
-private:
-    UART_HandleTypeDef* uart_handle_;
-    std::array<uint8_t, connectivity::uart::uart_buffer_size> tx_storage_;
-    std::size_t storage_cursor_ = 0;
-
     void Start(){
         UART_driver_(uart_handle_)->StartReading();
         PLACE_ASYNC_TASK({
-            if(UART_driver_(self->uart_handle_)->GetPack(self->pack_))
+            if(UART_driver_(self->uart_handle_)->GetPack(self->transmission_data_))
                 self->HandleUartMsg();
         }, 20);
     }
