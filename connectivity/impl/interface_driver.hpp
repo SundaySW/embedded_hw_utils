@@ -14,7 +14,7 @@ struct InterfaceDriver{
     }
 
     InterfaceDriver(){
-        PLACE_ASYNC_QUICKEST({ self->ProcessTasks();});
+        RUN_ASYNC_fast({ self->ProcessTasks();});
     }
 
     template<typename ...Types>

@@ -5,9 +5,9 @@
 #include "impl/can_port.hpp"
 #include "can_client.hpp"
 
-#define CAN_driver_() connectivity::can::Driver::global()
+#define CANDriver() connectivity::can::Driver::global()
 
-#define CAN_driver_register_client(expr) \
+#define CANDriver_register_client(expr) \
 connectivity::can::Driver::global().RegisterClient(connectivity::can::Client(this, [](void* context, CanPack &can_pack){\
     auto self = static_cast<decltype(this)>(context);                                                                   \
     expr;                                                                                                               \
@@ -63,7 +63,7 @@ struct Driver{
 
 private:
     Driver(){
-        PLACE_ASYNC_QUICKEST({self->PollPort();});
+        RUN_ASYNC_fast({self->PollPort();});
     }
 
     void PollPort()

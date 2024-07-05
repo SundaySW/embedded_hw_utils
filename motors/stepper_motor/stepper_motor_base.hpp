@@ -45,6 +45,7 @@ namespace StepperMotor{
     class StepperMotorBase{
     public:
         using MOTOR_IOS = pin_board::PIN<pin_board::Writeable>;
+        using Dir = Motor::Direction;
 
         StepperMotorBase() = delete;
         const StepperMotorBase& operator=(const StepperMotorBase &) = delete;

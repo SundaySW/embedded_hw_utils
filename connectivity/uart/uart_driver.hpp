@@ -18,7 +18,7 @@
             expr;                                                                                           \
         }))
 
-#define UART_driver_place_port_(port) connectivity::uart::Uart_Driver::global().PlacePort(port)
+#define UARTDriver_place_port_(port) connectivity::uart::Uart_Driver::global().PlacePort(port)
 #define UART_driver_(handle) connectivity::uart::Uart_Driver::global().GetPort(handle)
 #define UART_clear_queue_(handle) connectivity::uart::Uart_Driver::global().GetPort(handle)->ClearQueue()
 

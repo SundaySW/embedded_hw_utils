@@ -58,7 +58,7 @@ private:
 
     void Start(){
         UART_driver_(uart_handle_)->StartReading();
-        PLACE_ASYNC_TASK({
+        RUN_ASYNC_hz({
             if(UART_driver_(self->uart_handle_)->GetPack(self->transmission_data_))
                 self->HandleUartMsg();
         }, 20);

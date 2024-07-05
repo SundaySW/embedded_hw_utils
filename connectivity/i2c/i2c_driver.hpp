@@ -9,7 +9,7 @@
 #define I2C_PLACE_TASK_PTR(handle, ptr, lambda, args...)  \
                 connectivity::i2c::I2CDriver::global().GetPort(handle)->PlaceTask(args, connectivity::CB(ptr, lambda))
 
-#define I2C_driver_place_port_(port) connectivity::i2c::I2CDriver::global().PlacePort(port)
+#define I2CDriver_place_port_(port) connectivity::i2c::I2CDriver::global().PlacePort(port)
 #define I2C_driver_(handle) I2CDriver::global().GetPort(handle)
 #define I2C_clear_queue_() I2CDriver::global().GetPort(handle)->ClearQueue()
 
