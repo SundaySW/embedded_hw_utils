@@ -23,10 +23,11 @@ struct EEPROM{
         static constexpr T base_offset_                 {eeprom_params_start_addr_ + eeprom_calib_data_size_};
     };
 
-    static uint32_t CalcOffset(uint32_t size){
+    uint32_t CalcOffset(uint32_t size){
         static uint32_t offset {Specs::base_offset_};
+        auto ret_val = offset;
         offset += size;
-        return offset;
+        return ret_val;
     }
 
 protected:

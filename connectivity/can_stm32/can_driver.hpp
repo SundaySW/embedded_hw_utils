@@ -63,7 +63,7 @@ struct Driver{
 
 private:
     Driver(){
-        RUN_ASYNC_fast({self->PollPort();});
+        RUN_ASYNC({self->PollPort();});
     }
 
     void PollPort()

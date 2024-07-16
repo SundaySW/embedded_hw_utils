@@ -61,7 +61,7 @@ private:
         RUN_ASYNC_hz({
             if(UART_driver_(self->uart_handle_)->GetPack(self->transmission_data_))
                 self->HandleUartMsg();
-        }, 20);
+        }, 100);
     }
 
     template<typename T, std::size_t N>

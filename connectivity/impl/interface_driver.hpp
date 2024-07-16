@@ -14,7 +14,7 @@ struct InterfaceDriver{
     }
 
     InterfaceDriver(){
-        RUN_ASYNC_fast({ self->ProcessTasks();});
+        RUN_ASYNC({ self->ProcessTasks();});
     }
 
     template<typename ...Types>

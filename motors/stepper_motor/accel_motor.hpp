@@ -44,7 +44,7 @@ namespace MotorSpecial {
             k1 = 1 / (core_f(tTotal - x_offset) + 1);
             y_offset = k1 * Vmax;
         }
-        uint32_t VCalc(uint32_t uSec) {
+        [[gnu::always_inline]] uint32_t VCalc(uint32_t uSec) {
             return y_offset * core_f(uSec - x_offset) + y_offset;
         }
     };
@@ -68,7 +68,7 @@ namespace MotorSpecial {
         }
 
         uint32_t GetAccelTimeGap(){
-            return T_ - uSec_accel_;
+            return T_ - TimeOfAccelPhase();
         }
 
     protected:
@@ -97,8 +97,8 @@ namespace MotorSpecial {
             }
         }
 
-        void ParabolicAcceleration() {
-            switch (mode_) {
+        [[gnu::always_inline]] void ParabolicAcceleration() {
+            switch (CurrentMoveMode()) {
                 case Mode::ACCEL:
                     V_ += A_;
                     break;
@@ -114,13 +114,13 @@ namespace MotorSpecial {
         void AccelerationImpl() final{
             switch (accel_type_) {
                 case kLinear:
-                    V_ = static_cast<uint32_t>(k_ * uSec_accel_) + Vmin_;
+                    V_ = static_cast<uint32_t>(k_ * TimeOfAccelPhase()) + CurrentMinSpeed();
                     break;
                 case kConstantPower:
-                    V_ = static_cast<uint32_t>(k_ * sqrtf(uSec_accel_)) + Vmin_;
+                    V_ = static_cast<uint32_t>(k_ * sqrtf(TimeOfAccelPhase())) + CurrentMinSpeed();
                     break;
                 case kSigmoid:
-                    V_ = sigmoid_.VCalc(uSec_accel_);
+                    V_ = sigmoid_.VCalc(TimeOfAccelPhase());
                     break;
                 case kParabolic:
                     ParabolicAcceleration();

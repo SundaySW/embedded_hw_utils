@@ -5,8 +5,9 @@ namespace utils::task{
     struct CallBack{
         using CB_t = void (*) (void*, Args ...);
         CallBack() = default;
-        CallBack(CB_t&& f)
+        explicit CallBack(CB_t&& f)
             :cb_(f)
+            ,context_()
         {}
         CallBack(void* context, CB_t&& f)
             :cb_(f)
@@ -15,7 +16,7 @@ namespace utils::task{
         void operator()(Args ...args) const {
             cb_(context_, std::forward<Args>(args)...);
         }
-        bool HasContext()const{ return context_; }
+        [[nodiscard]] bool HasContext()const{ return context_; }
     private:
         void* context_;
         CB_t cb_;
