@@ -2,12 +2,12 @@
 
 #include "uart_task.hpp"
 #include "embedded_hw_utils/connectivity/impl/interface_port.hpp"
-#include "uart_pack.hpp"
+#include "embedded_hw_utils/utils/rx_storage.hpp"
 
 namespace connectivity::uart{
 
 struct UartPort final: InterfacePort<UartHandleT, UartTask, uart_queue_size>{
-
+    using RxStorage = utils::RxStorage<rx_storage_size>;
     void ErrorHandler(){
         assert(false);
 //        __HAL_UART_CLEAR_IT(handle_, UART_CLEAR_FEF);
@@ -28,11 +28,11 @@ struct UartPort final: InterfacePort<UartHandleT, UartTask, uart_queue_size>{
         HAL_UARTEx_ReceiveToIdle_DMA(handle_, rx_pack_.data().data(), rx_pack_.size());
     }
 
-    void RxHandlerSize(uint16_t size){
+    void RxHandlerSize(auto size){
         rx_pack_.setReady(size);
     }
 
-    bool GetPack(Pack& pack){
+    bool GetPack(RxStorage& pack){
         if(!rx_pack_.isReady())
             return false;
         pack = rx_pack_;
@@ -60,7 +60,7 @@ protected:
 
     }
 private:
-    Pack rx_pack_;
+    RxStorage rx_pack_;
 };
 
 }//namespace connectivity::uart

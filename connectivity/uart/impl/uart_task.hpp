@@ -6,7 +6,7 @@
 
 namespace connectivity::uart{
 
-using TaskT = Task<uart_buffer_size>;
+using TaskT = Task<uart_tx_buffer_size>;
 
 struct UartTask final: TaskT{
 

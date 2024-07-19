@@ -3,19 +3,24 @@
 #include <array>
 #include <cstring>
 
-namespace connectivity::uart{
+namespace utils{
+template<std::size_t storage_size>
+struct RxStorage {
+    auto dataView(auto size){
+        return std::views::counted( data_.begin(), size );
+    }
 
-struct Pack {
     auto& data(){
         return data_;
-   }
-   std::size_t size(){
-       return data_.size();
-   }
+    }
 
-   bool isReady(){
+    std::size_t size(){
+       return data_.size();
+    }
+
+    bool isReady(){
        return ready_;
-   }
+    }
 
     void setReady(auto size){
         ready_ = true;
@@ -25,16 +30,18 @@ struct Pack {
     void setPending(){
         ready_ = false;
     }
+
     void setRxSize(auto size){
         rx_size_ = size;
     }
+
     auto getRxSize(){
         return rx_size_;
     }
 private:
     bool ready_{false};
     uint16_t rx_size_{0};
-    std::array<uint8_t, kPack_size> data_;
+    std::array<uint8_t, storage_size> data_;
 };
 
-}//namespace connectivity::uart{
+}//namespace utils

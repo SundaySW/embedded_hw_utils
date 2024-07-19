@@ -1,18 +1,21 @@
 #pragma once
 
 #include <array>
-#include <cstring>
+#include <cstdint>
+#include <ranges>
 
-namespace monitor{
+namespace utils{
+template<
+        std::size_t payload_size,
+        std::size_t service_width_at_begin
+        >
 struct Packet{
-    static constexpr std::size_t kPayload_size = 8;
-    static constexpr std::size_t kCRC_width = 2;
-    static constexpr std::size_t kService_width = 1;
-    static constexpr std::size_t kPackSize = kPayload_size + kCRC_width + kService_width;
+    static constexpr std::size_t crc_width = 2;
+    static constexpr std::size_t pack_size = payload_size + service_width_at_begin + crc_width;
 
-    void PlaceData(auto data, auto size){
-        for(int i = 0; i < size; i++)
-            PlaceByteToStorage(data[i]);
+    void PlaceData(auto data_view){
+        for(auto& byte: data_view)
+            PlaceByteToStorage(byte);
     }
 
     void PlaceData(uint8_t byte){
@@ -24,14 +27,15 @@ struct Packet{
         crc_pass_ = false;
     }
 
+    auto GetPayloadView() { return std::views::counted(std::next(storage_.begin(), service_width_at_begin),
+                                                       pack_size ); }
     [[nodiscard]] const auto& data() const{ return storage_; }
-    [[nodiscard]] std::size_t size() const{ return storage_.size(); }
     [[nodiscard]] bool isReady() const{ return crc_pass_;}
 private:
     bool crc_pass_{false};
     std::size_t dlc_{0};
     std::size_t cursor_{0};
-    std::array<uint8_t, kPackSize> storage_{};
+    std::array<uint8_t, pack_size> storage_{};
 
     void PlaceByteToStorage(uint8_t byte){
         if(!isFull())
@@ -54,20 +58,20 @@ private:
     }
 
     uint16_t GetCRCFromPack(){
-        auto it = storage_.end();
-        auto f_b = std::prev(it, 1);
-        auto s_b = std::prev(it, 2);
-        return (*f_b << 8) | *s_b;
+        auto packet_end_it = std::next(storage_.begin(), pack_size);
+        auto start_byte = std::prev(packet_end_it, 1);
+        auto end_byte = std::prev(packet_end_it, 2);
+        return (*start_byte << 8) | *end_byte;
     }
 
     [[nodiscard]] bool isFull() const{
-        return cursor_ == kPackSize;
+        return cursor_ == pack_size;
     }
 
     [[nodiscard]]uint16_t CalcCRC() const{
         uint16_t crc = 0;
-        auto payload_section_it = std::next(storage_.begin(), kService_width);
-        for(std::size_t i = 0; i < kPayload_size; ++i, payload_section_it++)
+        auto payload_section_it = std::next(storage_.begin(), service_width_at_begin);
+        for(std::size_t i = 0; i < payload_size; ++i, payload_section_it++)
             crc += *payload_section_it;
         crc = ((~crc + 1) & 0xffff);
         return crc;
