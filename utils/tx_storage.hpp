@@ -39,9 +39,18 @@ struct TxStorage {
     void PlaceToStorage(Args&&... args){
         (PlaceValue(std::forward<Args>(args)), ...);
     }
+    template<typename ...Args>
+    void StoreBytes(Args&&... args){
+        (StoreByte(std::forward<Args>(args)), ...);
+    }
 private:
     std::size_t cursor_{0};
     std::array<uint8_t, storage_size> data_{};
+
+    void StoreByte(uint8_t byte){
+        assert(FitsInRange(1));
+        data_[cursor_++] = byte;
+    }
 
     template<typename T, std::size_t N>
     void PlaceValue(T(&array)[N])
@@ -52,16 +61,18 @@ private:
         cursor_ += size;
     }
 
-    void StoreByte(uint8_t byte){
-        assert(FitsInRange(1));
-        data_[cursor_++] = byte;
+    template<typename T>
+    void PlaceValue(T&& array)
+        requires(std::is_bounded_array<T>::value)
+    {
+        auto size = array.size() - 1;
+        assert(FitsInRange(size));
+        std::memcpy(currentDataIt(), array.begin(), size);
+        cursor_ += size;
     }
 
     void PlaceValue(float& num){
-//        auto ptr = std::bit_cast<char*>(tx_storage_.data()) + storage_cursor_;
-//        auto bytes_written = std::sprintf(ptr, "%.2f", num);
-//        if(bytes_written > 0)
-//            storage_cursor_ += bytes_written;
+        assert(FitsInRange(sizeof(num)));
         if(num < 0){
             StoreByte('-');
             num = -num;
@@ -82,14 +93,14 @@ private:
         StoreByte('0');
     }
 
-    void PlaceValue(int byte)
-    {
-        StoreByte(byte);
-    }
-
     template<typename T>
     void PlaceValue(T&& num)
     {
+        assert(FitsInRange(sizeof(T)));
+        if constexpr(std::is_same_v<std::remove_reference_t<T>, char>){
+            StoreByte(num);
+            return;
+        }
         auto ptr = std::bit_cast<char*>(std::next(data_.begin(), cursor_));
         auto bytes_written = std::sprintf(ptr, "%d", num);
         if(bytes_written > 0)

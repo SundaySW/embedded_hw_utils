@@ -21,9 +21,14 @@ protected:
     }
 
     template<typename ...Args>
-    void Send(Args&&... args){
+    void PlaceAndSend(Args&&... args){
         tx_storage_.PlaceToStorage(std::forward<Args>(args)...);
         SendToUART();
+    }
+
+    template<typename ...Args>
+    void Place(Args&&... args){
+        tx_storage_.PlaceToStorage(std::forward<Args>(args)...);
     }
 
 private:
@@ -61,6 +66,7 @@ private:
     }
 
     void PlaceTermination(){
-        tx_storage_.PlaceToStorage(0xFF, 0xFF, 0xFF);
+        static unsigned char term = 0xFF;
+        tx_storage_.StoreBytes(term, term, term);
     }
 };

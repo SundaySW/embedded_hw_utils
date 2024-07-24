@@ -12,7 +12,7 @@ constexpr std::size_t payload_size {8};
 struct Pack {
     Pack() = default;
 
-    Pack(uint32_t id_, uint8_t dlc_, uint8_t *const data_)
+    Pack(uint32_t id_, uint8_t dlc_, uint8_t* const data_)
         : id(id_), dlc(dlc_)
     {
         std::memcpy(data.data(), data_, dlc_);
@@ -20,6 +20,7 @@ struct Pack {
 
     Pack(uint32_t id_, std::span<uint8_t> data_)
         : id(id_)
+        , dlc(data_.size())
     {
         std::memcpy(data.data(), data_.data(), data_.size());
     }
