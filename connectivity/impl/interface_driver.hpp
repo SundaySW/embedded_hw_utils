@@ -6,6 +6,12 @@
 
 namespace connectivity{
 
+#define DRIVER_place_task_cb(interface_type, context_ptr, handle, expr, args...)                                      \
+connectivity::interface_type::PlaceTask(handle, args, connectivity::CB(context_ptr, [](void* context, uint8_t* data){ \
+    auto self = static_cast<decltype(this)>(context);                                                                 \
+    expr;                                                                                                             \
+}))
+
 template<typename Port_t, std::size_t pool_size>
 struct InterfaceDriver{
     void ProcessTasks(){
@@ -14,7 +20,7 @@ struct InterfaceDriver{
     }
 
     InterfaceDriver(){
-        RUN_ASYNC({ self->ProcessTasks();});
+        $RunAsync({ self->ProcessTasks();});
     }
 
     template<typename ...Types>

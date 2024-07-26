@@ -5,13 +5,11 @@
 #include "impl/can_port.hpp"
 #include "can_client.hpp"
 
-#define CANDriver() connectivity::can::Driver::global()
-
-#define CANDriver_register_client(expr) \
-connectivity::can::Driver::global().RegisterClient(connectivity::can::Client(this, [](void* context, CanPack &can_pack){\
-    auto self = static_cast<decltype(this)>(context);                                                                   \
-    expr;                                                                                                               \
-}))
+#define $CANRegisterClient(expr)                                                                                     \
+    connectivity::can::Driver().RegisterClient(connectivity::can::Client(this, [](void* context, CanPack &can_pack){  \
+        auto self = static_cast<decltype(this)>(context);                                                             \
+        expr;                                                                                                         \
+    }))
 
 namespace connectivity::can{
 
@@ -63,7 +61,7 @@ struct Driver{
 
 private:
     Driver(){
-        RUN_ASYNC({self->PollPort();});
+        $RunAsync( {self->PollPort();});
     }
 
     void PollPort()
@@ -85,7 +83,19 @@ private:
     Port port_;
 };
 
-}//namespace connectivity
+static void PlacePort(auto handle){
+    Driver::global().SetHandler(handle);
+}
+
+static Driver& Driver(){
+    return Driver::global();
+}
+
+static void SendMsg(Pack&& pack){
+    Driver::global().SendMsg(std::forward<Pack>(pack));
+}
+
+}//namespace connectivity::can
 
 extern "C"{
 void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
@@ -93,11 +103,11 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
     if((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET)
     {
         auto status = HAL_FDCAN_GetRxMessage(hfdcan, FDCAN_RX_FIFO0,
-                                             connectivity::can::Driver::global().Header(),
-                                             connectivity::can::Driver::global().RxData());
+                                             connectivity::can::Driver().Header(),
+                                             connectivity::can::Driver().RxData());
         if(status)
-            connectivity::can::Driver::global().ErrorHandler(status);
-        connectivity::can::Driver::global().OnRx();
+            connectivity::can::Driver().ErrorHandler(status);
+        connectivity::can::Driver().OnRx();
     }
 }
 }

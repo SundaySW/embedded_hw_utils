@@ -5,8 +5,8 @@
 
 namespace connectivity::spi{
 
-struct SpiPort final: InterfacePort<SpiHandleT, SpiTask, spi_queue_size>{
-//        explicit SpiPort(SpiHandleT handler)
+struct Port final: InterfacePort<HandleT, Task, queue_size>{
+//        explicit Port(HandleT handler)
 //            :InterfacePort(handler)
 //        {}
 
@@ -33,4 +33,4 @@ struct SpiPort final: InterfacePort<SpiHandleT, SpiTask, spi_queue_size>{
         }
     };
 
-} //namespace connectivity
+} //namespace connectivity::spi

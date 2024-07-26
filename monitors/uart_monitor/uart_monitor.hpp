@@ -3,7 +3,7 @@
 #include <ranges>
 
 #include "embedded_hw_utils/utils/crc_packet.hpp"
-#include "embedded_hw_utils/utils/tx_storage.hpp"
+#include "tx_storage.hpp"
 
 #include "embedded_hw_utils/connectivity/uart/uart_driver.hpp"
 #include "async_tim_tasks/async_tim_tasks.hpp"
@@ -11,7 +11,7 @@
 template<typename Monitor>
 struct UartMonitor{
     using Packet = utils::Packet<8, 1>;
-    using TxStorage = utils::TxStorage<connectivity::uart::uart_tx_buffer_size>;
+    using TxStorage = utils::TxStorage<connectivity::uart::tx_buffer_size>;
 protected:
     UartMonitor(UART_HandleTypeDef* uart_h, Monitor* monitor)
         :uart_handle_(uart_h)
@@ -35,7 +35,7 @@ private:
     Monitor* monitor_;
     UART_HandleTypeDef* uart_handle_;
     TxStorage tx_storage_;
-    connectivity::uart::UartPort::RxStorage rx_storage_;
+    connectivity::uart::Port::RxStorage rx_storage_;
     Packet assembled_packet_;
 
     void HandleUartMsg(){
@@ -53,14 +53,15 @@ private:
 
     void SendToUART(){
         PlaceTermination();
-        UART_PLACE_TASK(uart_handle_, utils::TxData{tx_storage_.dataPtr(), tx_storage_.cursor()});
+        connectivity::uart::PlaceTask(uart_handle_, utils::TxData{tx_storage_.dataPtr(), tx_storage_.cursor()});
         tx_storage_.Reset();
     }
 
     void Start(){
-        UART_driver_(uart_handle_)->StartReading();
-        RUN_ASYNC_hz({
-            if(UART_driver_(self->uart_handle_)->GetPack(self->rx_storage_))
+        using namespace connectivity::uart;
+        Port(uart_handle_)->StartReading();
+        $RunAsync({
+            if(Port(self->uart_handle_)->GetPack(self->rx_storage_))
                 self->HandleUartMsg();
         }, 100);
     }

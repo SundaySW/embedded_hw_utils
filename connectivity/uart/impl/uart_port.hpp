@@ -6,7 +6,7 @@
 
 namespace connectivity::uart{
 
-struct UartPort final: InterfacePort<UartHandleT, UartTask, uart_queue_size>{
+struct Port final: InterfacePort<HandleT, Task, tasks_queue_size>{
     using RxStorage = utils::RxStorage<rx_storage_size>;
     void ErrorHandler(){
         assert(false);

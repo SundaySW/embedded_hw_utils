@@ -6,16 +6,16 @@
 
 namespace connectivity::uart{
 
-using TaskT = Task<uart_tx_buffer_size>;
+using InterfaceTask = InterfaceTask<tx_buffer_size>;
 
-struct UartTask final: TaskT{
+struct Task final: InterfaceTask{
 
     template<typename ... Types>
-    UartTask(Types&&... args)
-        :TaskT(std::forward<decltype(args)>(args)...)
+    Task(Types&&... args)
+        :InterfaceTask(std::forward<Types>(args)...)
     {}
 //    template<typename ...Types>
-//    UartTask(Types&&... args)
+//    Task(Types&&... args)
 //    requires meta::utils::has_type<PinT, Types...>
 //    {
 //        meta::utils::remove_arg_by_type_and_invoke<PinT>(
@@ -26,4 +26,4 @@ struct UartTask final: TaskT{
 //    }
 };
 
-}//namespace connectivity
+}//namespace connectivity::uart

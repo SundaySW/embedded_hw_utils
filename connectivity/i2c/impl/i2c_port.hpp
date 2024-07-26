@@ -4,7 +4,7 @@
 
 namespace connectivity::i2c{
 
-struct I2CPort final: InterfacePort<I2CHandleT, I2CTask, i2c_queue_size>{
+struct Port final: InterfacePort<HandleT, Task, queue_size>{
 
 void ErrorHandler(){}
 

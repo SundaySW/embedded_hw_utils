@@ -5,37 +5,37 @@
 
 namespace connectivity::i2c{
 
-using TaskT = Task<i2c_buffer_size>;
+using InterfaceTask = InterfaceTask<buffer_size>;
 
-struct I2CTask final: TaskT{
+struct Task final: InterfaceTask{
     template<typename ... Types>
-    I2CTask(Types&&... args)
-        :TaskT(std::forward<decltype(args)>(args)...)
+    Task(Types&&... args)
+        :InterfaceTask(std::forward<decltype(args)>(args)...)
     {}
 
     template<typename ... Types>
-    I2CTask(uint16_t addr, Types&&... args)
-        :TaskT(std::forward<decltype(args)>(args)...)
+    Task(uint16_t addr, Types&&... args)
+        :InterfaceTask(std::forward<decltype(args)>(args)...)
         ,addr_(addr)
     {}
 
-    I2CAddrT GetAddr(){
+    AddrT GetAddr(){
         return addr_;
     }
 
 //        template<typename ...Types>
-//        I2CTask(Types&&... args)
-//        requires meta::utils::has_type<I2CAddrT, Types...>
+//        Task(Types&&... args)
+//        requires meta::utils::has_type<AddrT, Types...>
 //        {
-//            meta::utils::remove_arg_by_type_and_invoke<I2CAddrT>(
+//            meta::utils::remove_arg_by_type_and_invoke<AddrT>(
 //                    [&]<typename... Args_t>(Args_t &&...args_){
 //                        *this = TaskT(std::forward<Args_t>(args_)...);}
 //                    ,std::forward<Types>(args)...);
-//            addr_ = meta::utils::magic_get<I2CAddrT>(std::forward<Types>(args)...);
+//            addr_ = meta::utils::magic_get<AddrT>(std::forward<Types>(args)...);
 //        };
 
 private:
-    I2CAddrT addr_;
+    AddrT addr_;
 };
 
 }//namespace connectivity

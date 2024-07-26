@@ -3,36 +3,40 @@
 #include "embedded_hw_utils/connectivity/impl/interface_driver.hpp"
 #include "embedded_hw_utils/connectivity/spi/impl/spi_port.hpp"
 
-#define SPI_DRIVER_(handle) connectivity::spi::SPI_Driver::global().GetPort(handle)
+#define $SPIPlaceTask_cb(context_ptr, handle, expr, args...)   \
+    DRIVER_place_task_cb(spi, args)
 
-#define SPI_DRIVER_PLACE_PORT(hspi) \
-                connectivity::spi::SPI_Driver::global().PlacePort(hspi);
-#define SPI_PLACE_TASK(handle, args...)  \
-                connectivity::spi::SPI_Driver::global().GetPort(handle)->PlaceTask(args)
-#define SPI_PLACE_TASK_CB(handle, lambda, args...)  \
-                connectivity::spi::SPI_Driver::global().GetPort(handle)->PlaceTask(args, connectivity::CB(this, lambda))
-#define SPI_PLACE_TASK_PTR(handle, ptr, lambda, args...)  \
-                connectivity::spi::SPI_Driver::global().GetPort(handle)->PlaceTask(args, connectivity::CB(ptr, lambda))
-#define SPI_CLEAR_Q_() \
-                connectivity::spi::SPI_Driver::global().GetPort(handle)->ClearQueue()
 namespace connectivity::spi{
 
-struct SPI_Driver final: InterfaceDriver<SpiPort, spi_interface_cnt>{
-    static SPI_Driver& global(){
-        static auto instance = SPI_Driver();
+struct Driver final: InterfaceDriver<Port, interface_cnt>{
+    static Driver& global(){
+        static auto instance = Driver();
         return instance;
     }
 };
 
-}//namespace connectivity
+template <typename ... Types>
+static void PlaceTask(HandleT handle, Types&&... args){
+    Driver::global().GetPort(handle)->PlaceTask(std::forward<Types>(args)...);
+}
+
+void PlacePort(HandleT handle){
+    Driver::global().PlacePort(handle);
+}
+
+auto Port(HandleT handle){
+    return Driver::global().GetPort(handle);
+}
+
+}//namespace connectivity::spi
 
 extern "C"
 {
     void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef* hspi){
-        connectivity::spi::SPI_Driver::global().TxHandler(hspi);
+        connectivity::spi::Driver::global().TxHandler(hspi);
     }
 
     void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef* hspi){
-        connectivity::spi::SPI_Driver::global().RxHandler(hspi);
+        connectivity::spi::Driver::global().RxHandler(hspi);
     }
 }

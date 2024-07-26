@@ -9,11 +9,11 @@
 
 namespace connectivity::spi{
 
-using TaskT = Task<spi_buffer_size>;
+using InterfaceTask = InterfaceTask<buffer_size>;
 
 using PinT = pin_board::PIN<pin_board::Writeable>*;
 
-struct SpiTask final: TaskT{
+struct Task final: InterfaceTask{
 
     void ChipRelease(){
         if(pin_)
@@ -25,18 +25,18 @@ struct SpiTask final: TaskT{
     }
 
     template<typename ... Types>
-    SpiTask(Types&&... args)
-        :TaskT(std::forward<decltype(args)>(args)...)
+    Task(Types&&... args)
+        :InterfaceTask(std::forward<decltype(args)>(args)...)
     {}
 
     template<typename ... Types>
-    SpiTask(PinT pin, Types&&... args)
-        :TaskT(std::forward<decltype(args)>(args)...)
+    Task(PinT pin, Types&&... args)
+        :InterfaceTask(std::forward<decltype(args)>(args)...)
         ,pin_(pin)
     {}
 
 //    template<typename ...Types>
-//    SpiTask(Types&&... args)
+//    Task(Types&&... args)
 //    requires meta::utils::has_type<PinT, Types...>
 //    {
 //        meta::utils::remove_arg_by_type_and_invoke<PinT>(
@@ -50,4 +50,4 @@ private:
     std::optional<pin_board::PIN<pin_board::Writeable>*> pin_;
 };
 
-}//namespace connectivity
+}//namespace connectivity::spi
