@@ -5,7 +5,7 @@
 #include "impl/can_port.hpp"
 #include "can_client.hpp"
 
-#define $CANRegisterClient(expr)                                                                                     \
+#define $CANRegisterClient(expr)                                                                                      \
     connectivity::can::Driver().RegisterClient(connectivity::can::Client(this, [](void* context, CanPack &can_pack){  \
         auto self = static_cast<decltype(this)>(context);                                                             \
         expr;                                                                                                         \
@@ -66,9 +66,8 @@ private:
 
     void PollPort()
     {
-        auto optional_pack = port_.Read();
-        if(optional_pack)
-            SendAll(optional_pack.value());
+        if(auto pack_opt = port_.Read(); pack_opt)
+            SendAll(pack_opt.value());
         port_.Trans();
     }
 

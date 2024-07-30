@@ -86,6 +86,23 @@ protected:
             item = *(eeprom_data_ptr++);
         return true;
     }
+
+    template<typename T>
+    void ReadIn(T& var, uint32_t offset){
+        constexpr auto var_size = sizeof(T);
+        std::array<uint8_t, var_size> buffer_;
+        ReadBlock(offset, std::span{buffer_});
+        std::memcpy(&var, buffer_.data(), buffer_.size());
+    }
+
+    template<typename T>
+    bool WriteIn(T& var, uint32_t offset){
+        constexpr auto var_size = sizeof(T);
+        std::array<uint8_t, var_size> buffer_;
+        std::memcpy(buffer_.data(), &var, buffer_.size());
+        return WriteBlock(offset, std::span{buffer_});
+    }
+
 private:
     FLASH_EraseInitTypeDef erase_init_struct_{
         .TypeErase = FLASH_TYPEERASE_PAGES,
