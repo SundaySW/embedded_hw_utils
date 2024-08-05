@@ -52,7 +52,7 @@ protected:
 
         //modify buffer
         auto* buf_ptr = std::bit_cast<uint8_t*>(page_buffer_.data());
-        for (int i = 0; i < Size; i++)
+        for (std::size_t i = 0; i < Size; i++)
             buf_ptr[offsetOnPage + i] = data[i];
 
         //erase page
@@ -66,7 +66,7 @@ protected:
 
         //write page
         uint32_t flashWriteCounter = 0;
-        for (int i = 0; i < page_buffer_.size(); i++)
+        for (std::size_t i = 0; i < page_buffer_.size(); i++)
             if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, page_addr + i * 8, page_buffer_[i]) == HAL_OK)
                 flashWriteCounter++;
 
@@ -107,6 +107,7 @@ private:
     FLASH_EraseInitTypeDef erase_init_struct_{
         .TypeErase = FLASH_TYPEERASE_PAGES,
         .Banks = FLASH_BANK_1,
+        .Page = 0,
         .NbPages = 1
     };
     std::array<buffer_data_t, (EEPROM::Specs::memory_size_bytes / bytes_in_buffer_elem)> page_buffer_{};

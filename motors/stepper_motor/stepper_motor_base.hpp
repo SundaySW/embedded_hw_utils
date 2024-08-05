@@ -107,10 +107,10 @@ namespace StepperMotor{
             :step_pin_(cfg.step_pin)
             ,direction_pin_(cfg.direction_pin)
             ,enable_pin_(cfg.enable_pin)
-            ,timChannel_(cfg.timChannel)
             ,htim_(cfg.htim)
-            ,directionInverted_(cfg.directionInverted)
+            ,timChannel_(cfg.timChannel)
             ,kCriticalNofSteps_(cfg.criticalNofSteps)
+            ,directionInverted_(cfg.directionInverted)
         {
             timer_tick_Hz_ = SystemCoreClock / (cfg.htim->Instance->PSC);
         };

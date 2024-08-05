@@ -10,8 +10,8 @@ namespace utils::task{
             ,context_()
         {}
         CallBack(void* context, CB_t&& f)
-            :cb_(f)
-            ,context_(context)
+            :context_(context)
+            ,cb_(f)
         {}
         void operator()(Args ...args) const {
             cb_(context_, std::forward<Args>(args)...);
