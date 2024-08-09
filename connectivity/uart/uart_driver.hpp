@@ -1,5 +1,6 @@
 #pragma once
 
+#include "embedded_hw_utils/connectivity/uart/uart_driver_settings.hpp"
 #include "embedded_hw_utils/connectivity/uart/impl/uart_port.hpp"
 #include "embedded_hw_utils/connectivity/impl/interface_driver.hpp"
 

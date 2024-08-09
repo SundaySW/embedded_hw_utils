@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstring>
+#include <ranges>
 
 namespace utils{
 template<std::size_t storage_size>
